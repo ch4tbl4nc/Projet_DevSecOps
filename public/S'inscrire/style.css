@@ -5,34 +5,26 @@ body {
     background-color: black;
 }
 
-
-/* RECTANGLE CYBER */
-.rectangle1 {
-    width: 590px;
-    height: 490px;
-    background: black;
-    position: absolute;
-    right: -420px;
-    top: -3.5vh;
-    border-radius: 30px;
-    box-shadow:
-      0 0 15px rgb(31, 72, 161),
-      0 0 40px rgba(255,255,255,0.1);
-    z-index: -5;
+html, body {
+    width: 100vw;       /* largeur = largeur de la fenêtre */
+    height: 100vh;      /* hauteur = hauteur de la fenêtre */
+    margin: 0;
+    padding: 0;
+    overflow: hidden;   /* bloque tout défilement */
 }
+
 
 .texte-container {
     position: absolute;
-    left: 15vh;
-    top: 30vh;
+    left: 2vh;
+    top: 2vh;
     align-items: center;
     z-index: 5;
 }
 
 .titre-barres {
     color: #ffffff;
-    font-size: 200px;
-    font-weight: bold;
+    font-size: 30px;
     font-family: fantasy;
     margin: 0;
     padding: 0;
@@ -40,21 +32,7 @@ body {
     text-decoration: none;
 }
 
-.bar-top-1,
-.bar-top-2,
-.bar-bottom-1,
-.bar-bottom-2 {
-    height: 10px;
-    background-color: #ffffff;
-    width: 100%;
-    margin: 3vh 0 0 0;
-    z-index: 5;
-}
-.bar-top-2,
-.bar-bottom-2 {
-    width: 86.4%;
-    z-index: 5;
-}
+
 
 
 .cercle1 {
@@ -129,46 +107,63 @@ body {
 }
 
 
-
-
-
-.boutons-container {
-    position: absolute;        /*  tu peux maintenant le déplacer */
-    top: 41%;                 /* ajuste comme tu veux */
-    left: 73%;                /* ajuste comme tu veux */
-
-    display: flex;
-    flex-direction: column;
-    gap: 80px;
-    width: 330px;
-    z-index: 10;
-}
-
-.btn-rectangle {
-    background-color: rgb(31, 72, 161);
-    color: white;
-    padding: 15px 20px;
-    
-    border: none;
+.login-container {
+    width: 350px;
+    padding: 30px;
+    background: rgba(0, 0, 0, 0.5);
     border-radius: 20px;
-
-    font-size: 40px;
-    font-family: fantasy;
-    cursor: pointer;
+    box-shadow: 0 0 20px rgba(31,72,161,0.6);
     text-align: center;
-
-    box-shadow: 
-        0 0 10px rgb(31, 72, 161),
-        0 0 10px rgba(255, 255, 255, 0.6);
-
-    transition: 0.2s ease;
-    text-decoration: none;
-
+    color: white;
+    font-family: Arial, sans-serif;
+    position: absolute;
+    top: 20%;
+    left: 40%;
+    z-index: 30;
 }
 
-.btn-rectangle:hover {
+.login-input {
+    width: 90%;
+    padding: 12px;
+    margin: 15px 0;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    outline: none;
+}
+
+.login-btn {
+    width: 100%;
+    padding: 12px;
+    margin-top: 10px;
+    font-size: 18px;
+    background: rgb(31,72,161);
+    border: none;
+    color: white;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.login-btn:hover {
     transform: scale(1.05);
-    box-shadow: 
-        0 0 10px rgb(31, 72, 161),
-        0 0 10px rgba(255, 255, 255, 0.8);
+}
+
+.signup-text {
+    margin-top: 30px;
+    font-size: 14px;
+}
+
+.signup-link {
+    color: rgb(31,72,161);  /* change la couleur ici si tu veux */
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.signup-underline {
+    width: 90px;
+    height: 2px;
+    background-color: rgb(31,72,161);  /* même couleur que le lien */
+    margin: 5px auto 0;
+    border-radius: 5px;
 }
