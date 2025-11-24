@@ -96,33 +96,68 @@ body {
 }
 
 
+.orbit {
+    position: absolute;
+    width: 100vw;
+    height: 100vh;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* cercle 1 tourne lentement */
+.orbit1 {
+    animation: rotate1 3s linear infinite;
+}
+
+/* cercle 3 tourne dans l'autre sens */
+.orbit3 {
+    animation: rotate3 2s linear infinite;
+}
+
+/* ANIMATIONS */
+@keyframes rotate1 {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+}
+
+@keyframes rotate3 {
+    from { transform: rotate(360deg); }
+    to   { transform: rotate(0deg); }
+}
+
+
+
 
 
 .boutons-container {
-    position: absolute;        /* ✔ tu peux maintenant le déplacer */
-    top: 20%;                 /* ajuste comme tu veux */
-    left: 70%;                /* ajuste comme tu veux */
+    position: absolute;        /*  tu peux maintenant le déplacer */
+    top: 44%;                 /* ajuste comme tu veux */
+    left: 73%;                /* ajuste comme tu veux */
 
     display: flex;
     flex-direction: column;
-    gap: 20px;
-    width: 250px;
+    gap: 80px;
+    width: 330px;
+    z-index: 10;
 }
 
 .btn-rectangle {
-    background-color: #1f48a1;
+    background-color: rgb(31, 72, 161);
     color: white;
     padding: 15px 20px;
     
     border: none;
     border-radius: 20px;
 
-    font-size: 18px;
+    font-size: 40px;
+    font-family: fantasy;
     cursor: pointer;
 
     box-shadow: 
-        0 0 10px rgba(255,255,255,0.1),
-        0 0 20px rgba(31,72,161,0.6);
+        0 0 10px rgb(31, 72, 161),
+        0 0 10px rgba(255, 255, 255, 0.6);
 
     transition: 0.2s ease;
 }
@@ -130,6 +165,6 @@ body {
 .btn-rectangle:hover {
     transform: scale(1.05);
     box-shadow: 
-        0 0 15px rgba(255,255,255,0.2),
-        0 0 30px rgba(31,72,161,0.8);
+        0 0 10px rgb(31, 72, 161),
+        0 0 10px rgba(255, 255, 255, 0.8);
 }
