@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Événements GUARDIA</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <link rel="stylesheet" href="css/styles.css">
+  </head>
+  <body>
+    <div class="header">
+      <h1>🎉 Événements GUARDIA</h1>
+      <p>Découvrez tous nos événements à venir</p>
+    </div>
+
+    <div class="nav-buttons">
+      <a href="index.html" class="btn-nav">➕ Créer un événement</a>
+    </div>
+
+    <div class="main-content">
+      <div id="events-list" class="events-container">
+        <!-- Les événements seront chargés ici dynamiquement -->
+        <!-- Pour l'instant, des exemples statiques -->
+        
+        <div class="event-card" onclick="showOnMap(this)" 
+           data-address="22 Terr. Bellini, 92800 Puteaux, France"
+           data-name="Conférence Cybersécurité 2025">
+        <h3>🔐 Conférence Cybersécurité 2025</h3>
+        <div class="event-info">
+          <span class="icon">📅</span>
+          <span>15 Décembre 2025</span>
+        </div>
+        <div class="event-info">
+          <span class="icon">⏰</span>
+          <span>09:00 - 17:00</span>
+        </div>
+        <div class="event-info">
+          <span class="icon">📍</span>
+          <span>22 Terr. Bellini, 92800 Puteaux, France</span>
+        </div>
+        <div class="event-description">
+          Conférence sur les dernières tendances en cybersécurité avec des experts du domaine. Au programme : keynotes, ateliers et networking.
+        </div>
+        <span class="event-theme">Sécurité</span>
+      </div>
+
+      <div class="event-card" onclick="showOnMap(this)"
+           data-address="10 Rue de la Paix, 75002 Paris, France"
+           data-name="Workshop Pentesting">
+        <h3>💻 Workshop Pentesting</h3>
+        <div class="event-info">
+          <span class="icon">📅</span>
+          <span>20 Décembre 2025</span>
+        </div>
+        <div class="event-info">
+          <span class="icon">⏰</span>
+          <span>14:00 - 18:00</span>
+        </div>
+        <div class="event-info">
+          <span class="icon">📍</span>
+          <span>10 Rue de la Paix, 75002 Paris, France</span>
+        </div>
+        <div class="event-description">
+          Atelier pratique de test d'intrusion pour apprendre les techniques de hacking éthique. Places limitées !
+        </div>
+        <span class="event-theme">Workshop</span>
+      </div>
+
+      <div class="event-card" onclick="showOnMap(this)"
+           data-address="5 Avenue des Champs, 69001 Lyon, France"
+           data-name="Hackathon 2025">
+        <h3>🏆 Hackathon 2025</h3>
+        <div class="event-info">
+          <span class="icon">📅</span>
+          <span>10 Janvier 2026</span>
+        </div>
+        <div class="event-info">
+          <span class="icon">⏰</span>
+          <span>08:00 - 20:00</span>
+        </div>
+        <div class="event-info">
+          <span class="icon">📍</span>
+          <span>5 Avenue des Champs, 69001 Lyon, France</span>
+        </div>
+        <div class="event-description">
+          Compétition de hacking éthique sur 12h avec des défis passionnants. Prix pour les 3 meilleures équipes !
+        </div>
+        <span class="event-theme">Hackathon</span>
+      </div>
+    </div>
+
+      <!-- Carte Google Maps -->
+    <div class="map-container">
+        <div class="info-box" id="map-info">📍 Cliquez sur un événement pour voir sa localisation</div>
+      <iframe 
+        id="map-iframe"
+        src=""
+        allowfullscreen="" 
+        loading="lazy" 
+        referrerpolicy="no-referrer-when-downgrade">
+      </iframe>
+    </div>
+
+    <script>
+      // Fonction pour afficher un événement sur la carte
+      function showOnMap(eventCard) {
+        // Retirer la classe "selected" de toutes les cartes
+        document.querySelectorAll('.event-card').forEach(card => {
+          card.classList.remove('selected');
+        });
+
+        // Ajouter la classe "selected" à la carte cliquée
+        eventCard.classList.add('selected');
+
+        const address = eventCard.getAttribute('data-address');
+        const eventName = eventCard.getAttribute('data-name');
+        
+        const encodedAddress = encodeURIComponent(address);
+        const iframe = document.getElementById('map-iframe');
+        const infoBox = document.getElementById('map-info');
+        
+        iframe.src = `https://www.google.com/maps?q=${encodedAddress}&output=embed`;
+        infoBox.textContent = `📍 ${eventName} - ${address}`;
+      }
+
+      // Afficher le premier événement par défaut au chargement
+      window.addEventListener('DOMContentLoaded', () => {
+        const firstEvent = document.querySelector('.event-card');
+        if (firstEvent) {
+          showOnMap(firstEvent);
+        }
+      });
+
+      // Cette fonction sera utilisée plus tard pour charger les événements depuis PHP
+      /*
+      function loadEvents() {
+        fetch('get_events.php')
+          .then(response => response.json())
+          .then(data => {
+            if (data.success) {
+              displayEvents(data.data);
+            }
+          })
+          .catch(error => console.error('Erreur:', error));
+      }
+
+      function displayEvents(events) {
+        const container = document.getElementById('events-list');
+        
+        if (events.length === 0) {
+          container.innerHTML = `
+            <div class="no-events">
+              <h2>Aucun événement pour le moment</h2>
+              <p>Créez votre premier événement !</p>
+              <a href="index.html" class="btn-nav">Créer un événement</a>
+            </div>
+          `;
+          return;
+        }
+
+        container.innerHTML = events.map(event => {
+          const fullAddress = `${event.address}, ${event.postal_code} ${event.city}, ${event.country}`;
+          const eventDate = new Date(event.date).toLocaleDateString('fr-FR', {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric'
+          });
+          
+          return `
+            <div class="event-card" onclick="showOnMap(this)" 
+                 data-address="${fullAddress}"
+                 data-name="${event.name}">
+              <h3>${event.name}</h3>
+              <div class="event-info">
+                <span class="icon">📅</span>
+                <span>${eventDate}</span>
+              </div>
+              <div class="event-info">
+                <span class="icon">⏰</span>
+                <span>${event.heure_debut} - ${event.heure_fin}</span>
+              </div>
+              <div class="event-info">
+                <span class="icon">📍</span>
+                <span>${fullAddress}</span>
+              </div>
+              ${event.description ? `<div class="event-description">${event.description}</div>` : ''}
+              ${event.theme ? `<span class="event-theme">${event.theme}</span>` : ''}
+            </div>
+          `;
+        }).join('');
+      }
+      */
+    </script>
+  </body>
+</html>
