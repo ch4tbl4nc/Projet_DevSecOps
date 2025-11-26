@@ -146,8 +146,8 @@ body, html {
 
 .boutons-container {
     position: absolute;        /*  tu peux maintenant le déplacer */
-    top: 41%;                 /* ajuste comme tu veux */
-    left: 73%;                /* ajuste comme tu veux */
+    top: 38%;                 /* ajuste comme tu veux */
+    left: 74%;                /* ajuste comme tu veux */
 
     display: flex;
     flex-direction: column;

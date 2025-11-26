@@ -1,38 +1,74 @@
+/* ========== CONFIGURATION DES COULEURS (VARIABLES) ========== */
+:root {
+  /* --- COULEURS JOUR (Ton code original) --- */
+  --bg-body: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --bg-card: white;
+  --text-main: #333;
+  --text-sec: #666;
+  --title-color: #1967d2;
+  --border-color: #e0e0e0;         /* Gris clair pour les inputs */
+  --main-border: 0px solid transparent; /* Pas de bordure sur les gros blocs le jour */
+  --shadow: 0 5px 20px rgba(0,0,0,0.1);
+  --input-bg: white;
+  --bttn: #1967d2; 
+  --bttn-text: #FFFFFF;
+}
+
+[data-theme="dark"] {
+  /* --- COULEURS NUIT (Fond noir + Bordures bleues) --- */
+  --bg-body: #000000;
+  --bg-card: #100036ad;
+  --text-main: #828282;
+  --text-sec: #aaaaaa;
+  --title-color: #bcbcbc;          
+  --border-color: #003175;         /* Bordures des inputs en BLEU */
+  --main-border: 2px solid #002d6b; /* Bordure BLEUE autour des gros blocs */
+  --shadow: none;                  
+  --input-bg: #000000;
+  --bttn: #002d6b;
+  --bttn-text: #bcbcbc;
+}
+
 /* ========== STYLES GLOBAUX ========== */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  /* Petite animation pour que le changement soit fluide */
+  transition: background 0.3s, color 0.3s, border-color 0.3s; 
 }
 
 body {
   font-family: 'Arial', sans-serif;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--bg-body); /* VARIABLE */
   min-height: 100vh;
   padding: 20px;
   padding-bottom: 50px;
+  color: var(--text-main); /* VARIABLE */
 }
 
 /* ========== HEADER ========== */
 .header {
   text-align: center;
   margin-bottom: 40px;
-  background: white;
+  background: var(--bg-card); /* VARIABLE */
   padding: 30px;
   border-radius: 12px;
-  box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+  box-shadow: var(--shadow); /* VARIABLE */
   max-width: 1200px;
   margin: 0 auto 40px auto;
+  border: var(--main-border); /* VARIABLE (Bordure bleue en nuit) */
+
 }
 
 .header h1 {
-  color: #1967d2;
+  color: var(--title-color); /* VARIABLE */
   font-size: 36px;
   margin-bottom: 10px;
 }
 
 .header p {
-  color: #666;
+  color: var(--text-sec); /* VARIABLE */
   font-size: 16px;
 }
 
@@ -61,10 +97,11 @@ body {
 .container {
   max-width: 800px;
   margin: 0 auto;
-  background: white;
+  background: var(--bg-card); /* VARIABLE */
   border-radius: 12px;
   box-shadow: 0 10px 40px rgba(0,0,0,0.2);
   overflow: hidden;
+  border: var(--main-border); /* VARIABLE */
 }
 
 /* ========== FORMULAIRE (INDEX.HTML) ========== */
@@ -79,9 +116,10 @@ body {
 .form-group label {
   display: block;
   font-weight: bold;
-  color: #333;
+  color: var(--text-main); /* VARIABLE */
   margin-bottom: 8px;
   font-size: 14px;
+  
 }
 
 .form-group label .required {
@@ -94,11 +132,14 @@ body {
 .form-group select {
   width: 100%;
   padding: 12px 15px;
-  border: 2px solid #e0e0e0;
+  background: var(--input-bg); /* VARIABLE */
+  color: var(--text-main);     /* VARIABLE */
+  border: 2px solid var(--border-color); /* VARIABLE */
   border-radius: 6px;
   font-size: 14px;
   font-family: inherit;
   transition: border-color 0.3s;
+
 }
 
 .form-group input:focus,
@@ -128,8 +169,8 @@ body {
 .btn-submit {
   width: 100%;
   padding: 15px;
-  background: #1967d2;
-  color: white;
+  background: var(--bttn);
+  color: var(--bttn-text);
   border: none;
   border-radius: 6px;
   font-size: 16px;
@@ -148,7 +189,7 @@ body {
 
 .map-preview {
   margin-top: 30px;
-  border: 2px solid #e0e0e0;
+  border: 2px solid var(--border-color); /* VARIABLE */
   border-radius: 8px;
   overflow: hidden;
   height: 300px;
@@ -187,13 +228,18 @@ body {
 }
 
 .event-card {
-  background: white;
+  background: var(--bg-card); /* VARIABLE */
   border-radius: 12px;
   padding: 25px;
   box-shadow: 0 2px 10px rgba(0,0,0,0.1);
   cursor: pointer;
   transition: transform 0.3s, box-shadow 0.3s;
   border-left: 5px solid #1967d2;
+  
+  /* Ajout pour border nuit */
+  border-top: var(--main-border);
+  border-right: var(--main-border);
+  border-bottom: var(--main-border);
 }
 
 .event-card:hover {
@@ -205,6 +251,10 @@ body {
   border-left-color: #188038;
   background: #f0f8f4;
 }
+/* Exception pour le mode nuit: fond de la carte sélectionnée */
+[data-theme="dark"] .event-card.selected {
+  background: #0a200a; /* Vert très très sombre */
+}
 
 .event-card h3 {
   margin: 0 0 15px 0;
@@ -215,7 +265,7 @@ body {
 .event-info {
   margin: 8px 0;
   font-size: 14px;
-  color: #555;
+  color: var(--text-sec); /* VARIABLE */
   display: flex;
   align-items: center;
   gap: 8px;
@@ -228,8 +278,8 @@ body {
 .event-description {
   margin-top: 15px;
   padding-top: 15px;
-  border-top: 1px solid #e0e0e0;
-  color: #666;
+  border-top: 1px solid var(--border-color); /* VARIABLE */
+  color: var(--text-sec); /* VARIABLE */
   font-size: 14px;
   line-height: 1.5;
 }
@@ -250,11 +300,14 @@ body {
   top: 20px;
   width: 100%;
   height: 500px;
-  border: 3px solid white;
+  border: 3px solid var(--bg-card); /* VARIABLE (bordure blanche jour / noire nuit) */
   border-radius: 12px;
   box-shadow: 0 8px 30px rgba(0,0,0,0.3);
   overflow: hidden;
-  background: white;
+  background: var(--bg-card); /* VARIABLE */
+  
+  /* Ajout bordure bleue nuit */
+  outline: var(--main-border); 
 }
 
 .map-container iframe {
@@ -274,14 +327,15 @@ body {
 .no-events {
   text-align: center;
   padding: 60px 20px;
-  background: white;
+  background: var(--bg-card); /* VARIABLE */
   border-radius: 12px;
   max-width: 600px;
   margin: 0 auto;
+  border: var(--main-border); /* VARIABLE */
 }
 
 .no-events h2 {
-  color: #666;
+  color: var(--text-sec); /* VARIABLE */
   margin-bottom: 15px;
 }
 
@@ -290,12 +344,17 @@ body {
   margin-bottom: 25px;
 }
 
+/* Correctif pour les inputs date en mode nuit */
+[data-theme="dark"] input[type="date"],
+[data-theme="dark"] input[type="time"] {
+  color-scheme: dark;
+}
+
 /* ========== RESPONSIVE ========== */
 @media (max-width: 1200px) {
   .main-content {
     grid-template-columns: 1fr;
   }
-
   .map-container {
     position: relative;
     top: 0;
@@ -308,12 +367,87 @@ body {
   .form-row-3 {
     grid-template-columns: 1fr;
   }
-
   .header h1 {
     font-size: 28px;
   }
-
   .map-container {
     height: 350px;
   }
+}
+
+
+
+
+
+
+
+.cercle1 {
+    position: absolute;
+    top: 3%;               /* centre vertical */
+    left: 3%;              /* centre horizontal */
+    transform: translate(-50%, -50%);
+    width: 600px;           /* diamètre */
+    height: 600px;
+    border-radius: 50%;     /* cercle parfait */
+    background: radial-gradient(circle, rgb(31, 72, 161) 0%, rgba(31, 72, 161) 70%);
+    filter: blur(350px);     /* flou intense sur tout le cercle */
+    z-index: 0;             /* derrière autres éléments si nécessaire */
+}
+
+.cercle2 {
+    position: absolute;
+    top: 50%;               /* centre vertical */
+    left: 50%;              /* centre horizontal */
+    transform: translate(-50%, -50%);
+    width: 300px;           /* diamètre */
+    height: 300px;
+    border-radius: 50%;     /* cercle parfait */
+    background: radial-gradient(circle, rgb(31, 72, 161) 0%, rgba(31, 72, 161) 70%);
+    filter: blur(190px);     /* flou intense sur tout le cercle */
+    z-index: 0;             /* derrière autres éléments si nécessaire */
+}
+
+.cercle3 {
+    position: absolute;
+    top: 90%;               /* centre vertical */
+    left: 90%;              /* centre horizontal */
+    transform: translate(-50%, -50%);
+    width: 600px;           /* diamètre */
+    height: 600px;
+    border-radius: 50%;     /* cercle parfait */
+    background: radial-gradient(circle, rgb(31, 72, 161) 0%, rgba(31, 72, 161) 70%);
+    filter: blur(350px);     /* flou intense sur tout le cercle */
+    z-index: 0;          /* derrière autres éléments si nécessaire */
+}
+
+
+.orbit {
+    position: absolute;
+    width: 100vw;
+    height: 100vh;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    z-index: -100;
+}
+
+/* cercle 1 tourne lentement */
+.orbit1 {
+    animation: rotate1 3s linear infinite;
+}
+
+/* cercle 3 tourne dans l'autre sens */
+.orbit3 {
+    animation: rotate3 2s linear infinite;
+}
+
+/* ANIMATIONS */
+@keyframes rotate1 {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+}
+
+@keyframes rotate3 {
+    from { transform: rotate(360deg); }
+    to   { transform: rotate(0deg); }
 }

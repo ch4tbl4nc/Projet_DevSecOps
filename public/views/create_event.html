@@ -4,10 +4,13 @@
     <title>Créer un Événement - GUARDIA</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <link rel="stylesheet" href="../css/dashboard.css">
-  </head>
+    <link rel="stylesheet" href="../css/dashboard.css"> </head>
   <body>
-    <!-- Cercles d'ambiance animés -->
+
+    <button id="theme-btn" style="position:fixed; top:20px; right:20px; z-index:1000; padding:10px 15px; border-radius:30px; border:none; background:white; cursor:pointer; font-weight:bold; box-shadow:0 4px 10px rgba(0,0,0,0.2);">
+      🌙 Mode Nuit
+    </button>
+
     <div class="orbit orbit1">
       <div class="cercle1"></div>
     </div>
@@ -30,7 +33,6 @@
         </div>
 
         <form id="event-form" method="POST" action="create_event.php">
-          <!-- Informations générales -->
           <div class="form-group">
             <label for="name">Nom de l'événement <span class="required">*</span></label>
             <input type="text" id="name" name="name" required placeholder="Ex: Conférence Cybersécurité 2025">
@@ -46,7 +48,6 @@
             <textarea id="description" name="description" placeholder="Décrivez votre événement..."></textarea>
           </div>
 
-          <!-- Date et heures -->
           <div class="form-row">
             <div class="form-group">
               <label for="date">Date <span class="required">*</span></label>
@@ -62,9 +63,6 @@
             </div>
           </div>
 
-          
-
-          <!-- Adresse -->
           <div class="form-group">
             <label for="address">Adresse <span class="required">*</span></label>
             <input type="text" id="address" name="address" required placeholder="Ex: 22 Terr. Bellini">
@@ -86,7 +84,6 @@
             <input type="text" id="country" name="country" value="France" placeholder="France">
           </div>
 
-          <!-- Aperçu de la carte -->
           <div class="map-preview">
             <iframe id="map-iframe" src=""></iframe>
           </div>
@@ -97,7 +94,35 @@
     </div>
 
     <script>
-      // Mise à jour de la carte en temps réel
+      /* === SCRIPT MODE NUIT (AJOUTÉ) === */
+      const btn = document.getElementById('theme-btn');
+      const html = document.documentElement;
+
+      // Charger le thème sauvegardé
+      if(localStorage.getItem('theme') === 'dark') {
+        html.setAttribute('data-theme', 'dark');
+        btn.textContent = '☀️ Mode Jour';
+        btn.style.background = '#1967d2';
+        btn.style.color = 'white';
+      }
+
+      btn.addEventListener('click', () => {
+        if (html.getAttribute('data-theme') === 'dark') {
+          html.removeAttribute('data-theme');
+          localStorage.setItem('theme', 'light');
+          btn.textContent = '🌙 Mode Nuit';
+          btn.style.background = 'white';
+          btn.style.color = 'black';
+        } else {
+          html.setAttribute('data-theme', 'dark');
+          localStorage.setItem('theme', 'dark');
+          btn.textContent = '☀️ Mode Jour';
+          btn.style.background = '#1967d2';
+          btn.style.color = 'white';
+        }
+      });
+
+      /* === TON SCRIPT ORIGINAL === */
       const addressInput = document.getElementById('address');
       const cityInput = document.getElementById('city');
       const postalCodeInput = document.getElementById('postal_code');
@@ -117,18 +142,12 @@
         }
       }
 
-      // Écouteurs d'événements pour mettre à jour la carte
       addressInput.addEventListener('input', updateMap);
       cityInput.addEventListener('input', updateMap);
       postalCodeInput.addEventListener('input', updateMap);
       countryInput.addEventListener('input', updateMap);
 
-      // Gestion du formulaire
       document.getElementById('event-form').addEventListener('submit', function(e) {
-        // Pour tester sans PHP, décommentez la ligne suivante
-        // e.preventDefault();
-        
-        // Validation des heures
         const heureDebut = document.getElementById('heure_debut').value;
         const heureFin = document.getElementById('heure_fin').value;
         
@@ -137,17 +156,8 @@
           e.preventDefault();
           return false;
         }
-
-        // Afficher un message de succès (pour test sans PHP)
-        // document.getElementById('success-message').style.display = 'block';
-        // setTimeout(() => {
-        //   document.getElementById('event-form').reset();
-        //   mapIframe.src = '';
-        //   document.getElementById('success-message').style.display = 'none';
-        // }, 3000);
       });
 
-      // Définir la date minimale à aujourd'hui
       const today = new Date().toISOString().split('T')[0];
       document.getElementById('date').setAttribute('min', today);
     </script>
