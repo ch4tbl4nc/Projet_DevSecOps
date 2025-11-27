@@ -229,24 +229,97 @@ width: 1920px;
 
 
 
+
+
+
+.IMG-evenements {
+    width: 50%;
+    height: auto;
+    position: absolute;
+    top: 165%;
+    left: 10%;
+    z-index: 10;
+}
+
+.IMG-creation-evenement {
+    width: 30%;
+    height: auto;
+    position: absolute;
+    top: 255%;
+    left: 66%;
+    z-index: 10;
+}
+
 .IMG-Fond-J-N {
     width: 30%;
     height: auto;
     position: absolute;
-    top: 115%;
+    top: 315%;
     left: 10%;
     z-index: 10;
 }
 
 
-.texte-IMG-Fond-J-N {
-      color: rgb(255, 255, 255);        /* couleur du texte */
-    font-size: 34px;         /* taille */
+.texte-presentation {
+    color: rgb(255, 255, 255);        /* couleur du texte */
+    font-size: 24px;         /* taille */
     font-weight: 0;       /* épaisseur */
     font-family: 'Orbitron', sans-serif;
     position: absolute;
     text-align: center;
-    left: 10%;
-    top: 100%;
+    left: 15%;
+    top: 105%;
     z-index: 50;
 }
+
+
+.texte-evenements {
+    color: rgb(255, 255, 255);        /* couleur du texte */
+    font-size: 24px;         /* taille */
+    font-weight: 0;       /* épaisseur */
+    font-family: 'Orbitron', sans-serif;
+    position: absolute;
+    text-align: center;
+    left: 64%;
+    top: 162%;
+    z-index: 50;
+}
+
+.texte-evenements li {
+    text-align: left; /* Force le texte des listes à gauche */
+    margin-top: 20px; /* Un peu d'espace pour que ça respire */
+    list-style: none; /* Enlève les puces rondes moches (optionnel) */
+}
+
+
+
+.texte-creation-evenement {
+    color: rgb(255, 255, 255);        /* couleur du texte */
+    font-size: 24px;         /* taille */
+    font-weight: 0;       /* épaisseur */
+    font-family: 'Orbitron', sans-serif;
+    position: absolute;
+    text-align: center;
+    left: 15%;
+    top: 90%;
+    z-index: 50;
+}
+
+.texte-creation-evenement li {
+    text-align: left; /* Force le texte des listes à gauche */
+    margin-top: 20px; /* Un peu d'espace pour que ça respire */
+    list-style: none; /* Enlève les puces rondes moches (optionnel) */
+}
+
+.texte-Fond-J-N {
+    color: rgb(255, 255, 255);        /* couleur du texte */
+    font-size: 24px;         /* taille */
+    font-weight: 0;       /* épaisseur */
+    font-family: 'Orbitron', sans-serif;
+    position: absolute;
+    text-align: center;
+    left: 15%;
+    top: 105%;
+    z-index: 50;
+}
+
