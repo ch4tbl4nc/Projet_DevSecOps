@@ -1,432 +1,270 @@
-
+/* ========== RESET & GLOBAL ========== */
 body, html {
-margin: 0;
+    margin: 0;
     padding: 0;
     width: 100%;
-    height: 100%;
-    /* overflow: hidden;  <-- C'EST CETTE LIGNE QUI BLOQUE TOUT */
-    
-    /* REMPLACE PAR ÇA : */
-    overflow-y: auto;   /* Autorise le scroll vers le bas */
-    overflow-x: hidden; /* Empêche le scroll gauche/droite */
+    font-family: 'Orbitron', sans-serif;
     background-color: black;
+    color: white;
+    overflow-x: hidden; /* Empêche le scroll horizontal */
+    scroll-behavior: smooth;
 }
 
-.ecran-fixe {
-width: 1920px;
-    /* height: 1080px;  <-- Supprime ou change ça, sinon ça bloque la hauteur */
-    min-height: 100vh; /* S'adapte à l'écran au minimum, mais peut grandir */
-    
-    /* overflow: hidden; <-- Supprime ça aussi */
-    overflow:auto; 
-    
+/* Conteneur global pour centrer le contenu */
+.container {
+    max-width: 1400px;
     margin: 0 auto;
-    position: absolute;
+    padding: 0 20px;
+    position: relative;
+    z-index: 10; /* Au-dessus des cercles */
 }
 
-
-/* RECTANGLE CYBER */
-.rectangle1 {
-    width: 590px;
-    height: 490px;
-    background: black;
-    position: absolute;
-    right: -420px;
-    top: -3.5vh;
-    border-radius: 30px;
-    box-shadow:
-      0 0 15px rgb(31, 72, 161),
-      0 0 40px rgba(255,255,255,0.1);
-    z-index: -5;
+/* ========== BACKGROUND ANIMATION (CERCLES) ========== */
+.background-animation {
+    position: fixed; /* Fixe pour ne pas bouger au scroll */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
 }
 
-.texte-container {
+/* Tes styles de cercles originaux (adaptés en taille relative vw/vh) */
+.cercle1, .cercle3, .cercle4, .cercle5 {
     position: absolute;
-    left: 130vh;
-    top: 30vh;
+    width: 40vw; /* Taille relative à l'écran */
+    height: 40vw;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgb(31, 72, 161) 0%, rgba(31, 72, 161, 0) 70%);
+    filter: blur(100px);
+}
+
+.cercle1 { top: -10%; left: -10%; }
+.cercle3 { bottom: 10%; right: -10%; }
+.cercle4 { top: 40%; right: 20%; width: 20vw; height: 20vw; }
+.cercle5 { bottom: -10%; left: 20%; }
+
+/* Animations */
+.orbit { position: absolute; width: 100%; height: 100%; }
+.orbit1 { animation: rotate1 20s linear infinite; }
+.orbit3 { animation: rotate3 25s linear infinite; }
+
+@keyframes rotate1 { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+@keyframes rotate3 { from { transform: rotate(360deg); } to { transform: rotate(0deg); } }
+
+/* ========== HERO SECTION (HAUT DE PAGE) ========== */
+.hero-section {
+    position: relative;
+    height: 100vh; /* Prend tout l'écran */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    overflow: hidden;
+    z-index: 10;
+}
+
+.hero-content {
+    display: flex;
+    justify-content: space-between;
     align-items: center;
-    z-index: 5;
+    padding: 0 5%;
+    position: relative;
+    z-index: 20;
+}
+
+.hero-text-box {
+    position: relative;
 }
 
 .titre-barres {
     color: #ffffff;
-    font-size: 200px;
+    font-size: clamp(40px, 8vw, 150px); /* Taille adaptative : min 40px, max 150px */
     font-weight: bold;
     font-family: fantasy;
-    top: 35%;
-    left: 7%;
-    margin: 0;
-    padding: 0;
-    z-index: 10;
     text-decoration: none;
-    position: absolute;
+    line-height: 1;
+    display: block;
+    margin-bottom: 20px;
 }
 
-
-.cercle1 {
-    position: absolute;
-    top: 3%;               /* centre vertical */
-    left: 3%;              /* centre horizontal */
-    transform: translate(-50%, -50%);
-    width: 600px;           /* diamètre */
-    height: 600px;
-    border-radius: 50%;     /* cercle parfait */
-    background: radial-gradient(circle, rgb(31, 72, 161) 0%, rgba(31, 72, 161) 70%);
-    filter: blur(350px);     /* flou intense sur tout le cercle */
-    z-index: 0;             /* derrière autres éléments si nécessaire */
+/* Décoration barres autour du titre */
+.bar-deco {
+    height: 8px;
+    background: white;
+    width: 100%;
+    margin: 10px 0;
 }
 
-.cercle2 {
-    position: absolute;
-    top: 50%;               /* centre vertical */
-    left: 50%;              /* centre horizontal */
-    transform: translate(-50%, -50%);
-    width: 300px;           /* diamètre */
-    height: 300px;
-    border-radius: 50%;     /* cercle parfait */
-    background: radial-gradient(circle, rgb(31, 72, 161) 0%, rgba(31, 72, 161) 70%);
-    filter: blur(190px);     /* flou intense sur tout le cercle */
-    z-index: 0;             /* derrière autres éléments si nécessaire */
-}
-
-.cercle3 {
-    position: absolute;
-    top: 90%;               /* centre vertical */
-    left: 90%;              /* centre horizontal */
-    transform: translate(-50%, -50%);
-    width: 600px;           /* diamètre */
-    height: 600px;
-    border-radius: 50%;     /* cercle parfait */
-    background: radial-gradient(circle, rgb(31, 72, 161) 0%, rgba(31, 72, 161) 70%);
-    filter: blur(350px);     /* flou intense sur tout le cercle */
-    z-index: 0;          /* derrière autres éléments si nécessaire */
-}
-
-.cercle4 {
-    position: absolute;
-    top: 250%;               /* centre vertical */
-    left: 3%;              /* centre horizontal */
-    transform: translate(-50%, -50%);
-    width: 600px;           /* diamètre */
-    height: 600px;
-    border-radius: 50%;     /* cercle parfait */
-    background: radial-gradient(circle, rgb(31, 72, 161) 0%, rgba(31, 72, 161) 70%);
-    filter: blur(350px);     /* flou intense sur tout le cercle */
-    z-index: 0;             /* derrière autres éléments si nécessaire */
-}
-.cercle4-2 {
-    position: absolute;
-    top: 250%;               /* centre vertical */
-    left: 3%;              /* centre horizontal */
-    transform: translate(-50%, -50%);
-    width: 600px;           /* diamètre */
-    height: 600px;
-    border-radius: 50%;     /* cercle parfait */
-    background: radial-gradient(circle, rgb(31, 72, 161) 0%, rgba(31, 72, 161) 70%);
-    filter: blur(350px);     /* flou intense sur tout le cercle */
-    z-index: 0;             /* derrière autres éléments si nécessaire */
-}
-.cercle4-3 {
-    position: absolute;
-    top: 250%;               /* centre vertical */
-    left: 50%;              /* centre horizontal */
-    transform: translate(-50%, -50%);
-    width: 300px;           /* diamètre */
-    height: 300px;
-    border-radius: 50%;     /* cercle parfait */
-    background: radial-gradient(circle, rgb(31, 72, 161) 0%, rgba(31, 72, 161) 70%);
-    filter: blur(190px);     /* flou intense sur tout le cercle */
-    z-index: 0;             /* derrière autres éléments si nécessaire */
-}
-
-.cercle5 {
-    position: absolute;
-    top: 440%;               /* centre vertical */
-    left: 50%;              /* centre horizontal */
-    transform: translate(-50%, -50%);
-    width: 600px;           /* diamètre */
-    height: 600px;
-    border-radius: 50%;     /* cercle parfait */
-    background: radial-gradient(circle, rgb(31, 72, 161) 0%, rgba(31, 72, 161) 70%);
-    filter: blur(350px);     /* flou intense sur tout le cercle */
-    z-index: 0;          /* derrière autres éléments si nécessaire */
-}
-.cercle5-2 {
-    position: absolute;
-    top: 440%;               /* centre vertical */
-    left: 50%;              /* centre horizontal */
-    transform: translate(-50%, -50%);
-    width: 600px;           /* diamètre */
-    height: 600px;
-    border-radius: 50%;     /* cercle parfait */
-    background: radial-gradient(circle, rgb(31, 72, 161) 0%, rgba(31, 72, 161) 70%);
-    filter: blur(350px);     /* flou intense sur tout le cercle */
-    z-index: 0;          /* derrière autres éléments si nécessaire */
-}
-.cercle5-3 {
-    position: absolute;
-    top: 440%;               /* centre vertical */
-    left: 50%;              /* centre horizontal */
-    transform: translate(-50%, -50%);
-    width: 300px;           /* diamètre */
-    height: 300px;
-    border-radius: 50%;     /* cercle parfait */
-    background: radial-gradient(circle, rgb(31, 72, 161) 0%, rgba(31, 72, 161) 70%);
-    filter: blur(190px);     /* flou intense sur tout le cercle */
-    z-index: 0;             /* derrière autres éléments si nécessaire */
-}
-
-.orbit {
-    position: absolute;
-    width: 100vw;
-    height: 100vh;
-    top: 0;
-    left: 0;
-    pointer-events: none;
-    z-index: 0;
-}
-
-/* cercle 1 tourne lentement */
-.orbit1 {
-    animation: rotate1 3s linear infinite;
-}
-
-/* cercle 3 tourne dans l'autre sens */
-.orbit3 {
-    animation: rotate3 2s linear infinite;
-}
-
-.orbit4 {
-    animation: rotate1 3s linear infinite;
-}
-.orbit4-2 {
-    animation: rotate3 2s linear infinite;
-}
-
-/* cercle 3 tourne dans l'autre sens */
-.orbit5 {
-    animation: rotate1 3s linear infinite;
-}
-.orbit5-2 {
-    animation: rotate3 2s linear infinite;
-}
-
-/* ANIMATIONS */
-@keyframes rotate1 {
-    from { transform: rotate(0deg); }
-    to   { transform: rotate(360deg); }
-}
-
-@keyframes rotate3 {
-    from { transform: rotate(360deg); }
-    to   { transform: rotate(0deg); }
-}
-
-
-
-
-
+/* Boutons */
 .boutons-container {
-    position: absolute;        /*  tu peux maintenant le déplacer */
-    top: 38%;                 /* ajuste comme tu veux */
-    left: 74%;                /* ajuste comme tu veux */
-
     display: flex;
     flex-direction: column;
-    gap: 80px;
-    width: 330px;
-    z-index: 10;
+    gap: 20px;
 }
 
 .btn-rectangle {
     background-color: rgb(31, 72, 161);
     color: white;
-    padding: 15px 20px;
-    
-    border: none;
+    padding: 15px 30px;
     border-radius: 20px;
-
-    font-size: 40px;
+    font-size: clamp(18px, 2vw, 30px);
     font-family: fantasy;
-    cursor: pointer;
     text-align: center;
-
-    box-shadow: 
-        0 0 10px rgb(31, 72, 161),
-        0 0 10px rgba(255, 255, 255, 0.6);
-
-    transition: 0.2s ease;
     text-decoration: none;
-
+    box-shadow: 0 0 10px rgb(31, 72, 161);
+    transition: 0.3s ease;
+    white-space: nowrap;
 }
 
 .btn-rectangle:hover {
     transform: scale(1.05);
-    box-shadow: 
-        0 0 10px rgb(31, 72, 161),
-        0 0 10px rgba(255, 255, 255, 0.8);
+    box-shadow: 0 0 20px rgb(31, 72, 161);
 }
 
-
-
-
-
-    .scroll-next1 {
-      position: absolute;
-      bottom: 30px;
-      left: 50%;
-      transform: translateX(-50%);
-    }
-
-    .scroll-down1 {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 50px;
-      height: 50px;
-      border: 2px solid #667eea;
-      border-radius: 50%;
-      color: #667eea;
-      text-decoration: none;
-      transition: all 0.3s ease;
-      cursor: pointer;
-      backdrop-filter: blur(10px);
-    }
-
-    .scroll-down-icon1 {
-      font-size: 24px;
-      animation: bounce 2s infinite;
-    }
-
-    @keyframes bounce {
-      0%, 20%, 50%, 80%, 100% {
-        transform: translateY(0);
-      }
-      40% {
-        transform: translateY(-10px);
-      }
-      60% {
-        transform: translateY(-5px);
-      }
-    }
-
-
-
-
-
-
-
-
-
-
-
-.IMG-evenements {
-    width: 50%;
-    height: auto;
+/* Spline Viewer (Arrière plan du Hero) */
+.spline-container {
     position: absolute;
-    top: 165%;
-    left: 10%;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 5;
+    opacity: 0.8;
+}
+
+/* Scroll Down Icon */
+.scroll-next {
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 30;
+}
+
+.scroll-down {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 50px;
+    border: 2px solid #667eea;
+    border-radius: 50%;
+    color: #667eea;
+    text-decoration: none;
+    animation: bounce 2s infinite;
+}
+@keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+
+/* ========== SECTIONS CONTENU (INTRO & FEATURES) ========== */
+.intro-section {
+    padding: 100px 0;
+    text-align: center;
+}
+
+.intro-section h1 { font-size: clamp(24px, 4vw, 48px); margin-bottom: 20px; color: #4dabf7; }
+.intro-section h3 { font-size: clamp(18px, 2vw, 28px); font-weight: normal; margin-bottom: 40px; }
+.intro-section p { font-size: 18px; line-height: 1.6; max-width: 800px; margin: 0 auto; }
+
+/* Feature Row (Image + Texte) */
+.feature-section {
+    padding: 80px 0;
+}
+
+.feature-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 50px;
+}
+
+/* Pour inverser l'ordre (Texte - Image) */
+.feature-row.reverse {
+    flex-direction: row-reverse;
+}
+
+.feature-image {
+    flex: 1; /* Prend 50% de l'espace */
+    display: flex;
+    justify-content: center;
+}
+
+.feature-image img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 12px;
+    box-shadow: 0 0 30px rgba(31, 72, 161, 0.4);
+    transition: transform 0.3s;
+}
+
+.feature-image img:hover {
+    transform: scale(1.02);
+}
+
+.feature-text {
+    flex: 1; /* Prend 50% de l'espace */
+}
+
+.feature-text h2 { color: #4dabf7; font-size: 32px; margin-bottom: 15px; }
+.feature-text h3 { margin-bottom: 25px; font-weight: normal; }
+.feature-text ul { list-style: none; padding: 0; }
+.feature-text li { margin-bottom: 20px; line-height: 1.5; font-size: 18px; }
+.feature-text strong { color: #1967d2; display: block; margin-bottom: 5px; font-size: 20px; }
+
+/* ========== FOOTER ========== */
+footer {
+    padding: 50px 0;
+    text-align: center;
+    position: relative;
     z-index: 10;
 }
 
-.IMG-creation-evenement {
-    width: 40%;
-    height: auto;
-    position: absolute;
-    top: 255%;
-    left: 56%;
-    z-index: 10;
+/* ========== RESPONSIVE (MOBILE & TABLETTE) ========== */
+@media (max-width: 992px) {
+    /* Hero Section */
+    .hero-content {
+        flex-direction: column;
+        justify-content: center;
+        text-align: center;
+        gap: 50px;
+        padding-top: 100px;
+    }
+
+    .boutons-container {
+        flex-direction: row; /* Boutons côte à côte sur mobile */
+        justify-content: center;
+    }
+    
+    .spline-container {
+        opacity: 0.5; /* Moins visible sur mobile pour la lisibilité */
+    }
+
+    /* Sections Features */
+    .feature-row, 
+    .feature-row.reverse {
+        flex-direction: column; /* Tout empiler verticalement */
+        text-align: center;
+    }
+
+    .feature-text ul {
+        text-align: left; /* Garder les listes alignées à gauche pour la lecture */
+        padding: 0 20px;
+    }
+    
+    .feature-image {
+        margin-bottom: 30px;
+    }
 }
 
-.IMG-Fond-J-N {
-    width: 40%;
-    height: auto;
-    position: absolute;
-    top: 370%;
-    left: 10%;
-    z-index: 10;
-}
-
-
-.texte-presentation {
-    color: rgb(255, 255, 255);        /* couleur du texte */
-    font-size: 24px;         /* taille */
-    font-weight: 0;       /* épaisseur */
-    font-family: 'Orbitron', sans-serif;
-    position: absolute;
-    text-align: center;
-    left: 15%;
-    top: 105%;
-    z-index: 50;
-}
-
-
-.texte-evenements {
-    color: rgb(255, 255, 255);        /* couleur du texte */
-    font-size: 24px;         /* taille */
-    font-weight: 0;       /* épaisseur */
-    font-family: 'Orbitron', sans-serif;
-    position: absolute;
-    text-align: center;
-    left: 64%;
-    top: 162%;
-    z-index: 50;
-}
-
-.texte-evenements li {
-    text-align: left; /* Force le texte des listes à gauche */
-    margin-top: 20px; /* Un peu d'espace pour que ça respire */
-}
-
-
-
-.texte-creation-evenement {
-    color: rgb(255, 255, 255);        /* couleur du texte */
-    font-size: 24px;         /* taille */
-    font-weight: 0;       /* épaisseur */
-    font-family: 'Orbitron', sans-serif;
-    position: absolute;
-    text-align: center;
-    left: 10%;
-    top: 253%;
-    z-index: 50;
-}
-
-.texte-creation-evenement li {
-    text-align: left; /* Force le texte des listes à gauche */
-    margin-top: 20px; /* Un peu d'espace pour que ça respire */
-}
-
-
-
-.texte-Fond-J-N {
-    color: rgb(255, 255, 255);        /* couleur du texte */
-    font-size: 24px;         /* taille */
-    font-weight: 0;       /* épaisseur */
-    font-family: 'Orbitron', sans-serif;
-    position: absolute;
-    text-align: center;
-    left: 55%;
-    top: 375%;
-    z-index: 50;
-}
-
-.texte-Fond-J-N li {
-    text-align: left; /* Force le texte des listes à gauche */
-    margin-top: 20px; /* Un peu d'espace pour que ça respire */
-}
-
-
-
-
-.footer-text {
-    color: rgb(255, 255, 255);        /* couleur du texte */
-    font-size: 20px;         /* taille */
-    font-weight: 0;       /* épaisseur */
-    font-family: 'Orbitron', sans-serif;
-    position: absolute;
-    text-align: center;
-    left: 35%;
-    top: 500%;
-    z-index: 50;
+@media (max-width: 480px) {
+    .boutons-container {
+        flex-direction: column; /* Boutons l'un sous l'autre sur petit écran */
+        width: 100%;
+    }
+    
+    .btn-rectangle {
+        width: 100%;
+        font-size: 20px;
+    }
 }

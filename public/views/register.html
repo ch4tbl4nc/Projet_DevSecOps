@@ -1,65 +1,50 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap">
     <title>MonAgendaPro / S'inscrire</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="../css/register.css">
-    <link rel="icon" type="image/png" href="" />
 </head>
 
 <body>
-<div class="ecran-fixe"></div>
 
+    <div class="background-animation">
+        <div class="orbit orbit1"><div class="cercle1"></div></div>
+        <div class="cercle2"></div>
+        <div class="orbit orbit3"><div class="cercle3"></div></div>
+    </div>
 
-<div class="orbit orbit1">
-    <div class="cercle1"></div>
-</div>
+    <div class="logo-container">
+        <a href="../index.html" class="titre-barres">MonAgendaPro</a>
+    </div>
 
-<div class="cercle2"></div>
+    <main class="main-wrapper">
+        <div class="login-container">
+            <h2>Créer un compte</h2>
 
-<div class="orbit orbit3">
-    <div class="cercle3"></div>
-</div>
+            <form action="#"> <input type="text" class="login-input" placeholder="Nom d'utilisateur" required>
+                <input type="email" class="login-input" placeholder="Adresse email" required>
+                <input type="password" class="login-input" placeholder="Mot de passe" required>
+                <input type="password" class="login-input" placeholder="Confirmer le mot de passe" required>
 
+                <button type="submit" class="login-btn">S'inscrire</button>
+            </form>
 
+            <p class="signup-text">
+                Vous avez déjà un compte ? <br>
+                <a href="login.html" class="signup-link">Connectez-vous</a>
+            </p>
+            
+            <div class="signup-underline"></div>
+        </div>
+    </main>
 
-<div class="login-container">
-    <h2>Créer un compte</h2>
-
-    <input type="text" class="login-input" placeholder="Nom d'utilisateur">
-    <input type="email" class="login-input" placeholder="Adresse email">
-    <input type="password" class="login-input" placeholder="Mot de passe">
-    <input type="password" class="login-input" placeholder="Confirmer le mot de passe">
-
-    <button class="login-btn">S'inscrire</button>
-
-    <p class="signup-text">
-        Vous avez déjà un compte ? 
-        <a href="login.html" class="signup-link">Connectez-vous</a>
-    </p>
-
-    <div class="signup-underline"></div>
-</div>
-
-
-
-<div class="texte-container">
-  <div class="bar-top-1"></div>
-  <div class="bar-top-2"></div>
-
-  <a href="../index.html" class="titre-barres"><span>MonAgendaPro</span></a>
-
-  <div class="bar-bottom-2"></div>
-  <div class="bar-bottom-1"></div>
-</div>
-
-
-
-    <section>
-      <spline-viewer url="https://prod.spline.design/e0tP9lJ6G7-APtxP/scene.splinecode"></spline-viewer>
-    </section>
+    <div class="spline-background">
+        <spline-viewer url="https://prod.spline.design/e0tP9lJ6G7-APtxP/scene.splinecode"></spline-viewer>
+    </div>
 
     <script src="script.js"></script>
 </body>

@@ -1,185 +1,182 @@
-
+/* ========== RESET & GLOBAL ========== */
 body, html {
     margin: 0;
     padding: 0;
     width: 100%;
-    height: 100%;
-    overflow: hidden;
+    min-height: 100vh; /* Prend toute la hauteur de l'écran */
+    font-family: Arial, sans-serif;
     background-color: black;
-}
-
-.ecran-fixe {
-    width: 1920px;
-    height: 1080px;
-
-    overflow: hidden;
-
-    margin: 0 auto;
-}
-
-html, body {
-    width: 100vw;       /* largeur = largeur de la fenêtre */
-    height: 100vh;      /* hauteur = hauteur de la fenêtre */
-    margin: 0;
-    padding: 0;
-    overflow: hidden;   /* bloque tout défilement */
-}
-
-.texte-container {
-    position: absolute;
-    left: 2vh;
-    top: 2vh;
+    color: white;
+    overflow-x: hidden; /* Pas de scroll horizontal */
+    
+    /* C'est ICI que la magie opère pour centrer le formulaire */
+    display: flex;
+    justify-content: center;
     align-items: center;
-    z-index: 5;
+    position: relative;
+}
+
+/* ========== ARRIÈRE-PLAN (CERCLES) ========== */
+.background-animation {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
+}
+
+/* Cercles Responsive (taille en vw) */
+.cercle1, .cercle3 {
+    position: absolute;
+    width: 50vw;
+    height: 50vw;
+    max-width: 600px;
+    max-height: 600px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgb(31, 72, 161) 0%, rgba(31, 72, 161, 0) 70%);
+    filter: blur(100px);
+}
+.cercle1 { top: -10%; left: -10%; }
+.cercle2 {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 300px; height: 300px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgb(31, 72, 161) 0%, rgba(31, 72, 161, 0) 70%);
+    filter: blur(80px);
+}
+.cercle3 { bottom: -10%; right: -10%; }
+
+/* Animation Rotation */
+.orbit { position: absolute; width: 100%; height: 100%; }
+.orbit1 { animation: rotate1 20s linear infinite; }
+.orbit3 { animation: rotate3 25s linear infinite; }
+
+@keyframes rotate1 { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+@keyframes rotate3 { from { transform: rotate(360deg); } to { transform: rotate(0deg); } }
+
+/* ========== LOGO (Haut Gauche) ========== */
+.logo-container {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    z-index: 50;
 }
 
 .titre-barres {
     color: #ffffff;
-    font-size: 30px;
+    font-size: clamp(20px, 4vw, 30px);
     font-family: fantasy;
-    margin: 0;
-    padding: 0;
-    z-index: 5;
     text-decoration: none;
+    text-shadow: 0 0 10px rgba(31, 72, 161, 0.8);
 }
 
-
-
-
-.cercle1 {
-    position: absolute;
-    top: 3%;               /* centre vertical */
-    left: 3%;              /* centre horizontal */
-    transform: translate(-50%, -50%);
-    width: 600px;           /* diamètre */
-    height: 600px;
-    border-radius: 50%;     /* cercle parfait */
-    background: radial-gradient(circle, rgb(31, 72, 161) 0%, rgba(31, 72, 161) 70%);
-    filter: blur(350px);     /* flou intense sur tout le cercle */
-    z-index: 0;             /* derrière autres éléments si nécessaire */
-}
-
-.cercle2 {
-    position: absolute;
-    top: 50%;               /* centre vertical */
-    left: 50%;              /* centre horizontal */
-    transform: translate(-50%, -50%);
-    width: 300px;           /* diamètre */
-    height: 300px;
-    border-radius: 50%;     /* cercle parfait */
-    background: radial-gradient(circle, rgb(31, 72, 161) 0%, rgba(31, 72, 161) 70%);
-    filter: blur(190px);     /* flou intense sur tout le cercle */
-    z-index: 0;             /* derrière autres éléments si nécessaire */
-}
-
-.cercle3 {
-    position: absolute;
-    top: 90%;               /* centre vertical */
-    left: 90%;              /* centre horizontal */
-    transform: translate(-50%, -50%);
-    width: 600px;           /* diamètre */
-    height: 600px;
-    border-radius: 50%;     /* cercle parfait */
-    background: radial-gradient(circle, rgb(31, 72, 161) 0%, rgba(31, 72, 161) 70%);
-    filter: blur(350px);     /* flou intense sur tout le cercle */
-    z-index: 0;          /* derrière autres éléments si nécessaire */
-}
-
-
-.orbit {
-    position: absolute;
-    width: 100vw;
-    height: 100vh;
-    top: 0;
-    left: 0;
-    pointer-events: none;
-    z-index: 0;
-}
-
-/* cercle 1 tourne lentement */
-.orbit1 {
-    animation: rotate1 3s linear infinite;
-}
-
-/* cercle 3 tourne dans l'autre sens */
-.orbit3 {
-    animation: rotate3 2s linear infinite;
-}
-
-/* ANIMATIONS */
-@keyframes rotate1 {
-    from { transform: rotate(0deg); }
-    to   { transform: rotate(360deg); }
-}
-
-@keyframes rotate3 {
-    from { transform: rotate(360deg); }
-    to   { transform: rotate(0deg); }
-}
-
-
+/* ========== FORMULAIRE CONNEXION ========== */
 .login-container {
-    width: 350px;
-    margin: 150px auto;
-    padding: 30px;
-    background: rgba(0, 0, 0, 0.5);
+    position: relative;
+    z-index: 100; /* Au premier plan */
+    
+    /* Dimensions Responsive */
+    width: 90%;          /* Prend 90% sur mobile */
+    max-width: 400px;    /* Max 400px sur PC */
+    
+    padding: 40px 30px;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(10px); /* Effet Verre */
     border-radius: 20px;
-    box-shadow: 0 0 20px rgba(31,72,161,0.6);
+    box-shadow: 0 0 30px rgba(31, 72, 161, 0.5);
+    border: 1px solid rgba(31, 72, 161, 0.3);
     text-align: center;
-    color: white;
-    font-family: Arial, sans-serif;
-    position: absolute;
-    top: 9%;
-    left: 40%;
-    z-index: 30;
+}
+
+.login-container h2 {
+    margin-bottom: 25px;
+    font-family: 'Orbitron', sans-serif;
+    letter-spacing: 1px;
 }
 
 .login-input {
-    width: 90%;
-    padding: 12px;
-    margin: 15px 0;
-    border: none;
+    width: 100%;
+    padding: 15px;
+    margin-bottom: 15px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 10px;
     font-size: 16px;
+    color: white;
     outline: none;
-    position: flex;
-    left: -10%;
+    box-sizing: border-box; /* Empêche l'input de dépasser */
+    transition: 0.3s;
+}
+
+.login-input::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.login-input:focus {
+    border-color: rgb(31, 72, 161);
+    background: rgba(0, 0, 0, 0.8);
+    box-shadow: 0 0 10px rgba(31, 72, 161, 0.5);
 }
 
 .login-btn {
     width: 100%;
-    padding: 12px;
+    padding: 15px;
     margin-top: 10px;
     font-size: 18px;
-    background: rgb(31,72,161);
+    font-weight: bold;
+    font-family: 'Orbitron', sans-serif;
+    background: rgb(31, 72, 161);
     border: none;
     color: white;
     border-radius: 10px;
     cursor: pointer;
-    transition: 0.2s;
+    transition: 0.3s ease;
+    text-transform: uppercase;
 }
 
 .login-btn:hover {
-    transform: scale(1.05);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(31, 72, 161, 0.6);
 }
 
 .signup-text {
-    margin-top: 30px;
+    margin-top: 25px;
     font-size: 14px;
+    line-height: 1.6;
+    color: #ccc;
 }
 
-/* 👉 Tu peux changer la couleur du lien ici */
 .signup-link {
-    color: rgb(31,72,161);
+    color: #4dabf7;
     text-decoration: none;
     font-weight: bold;
+    transition: color 0.3s;
 }
 
-/* petite barre sous le lien */
+.signup-link:hover {
+    color: white;
+    text-shadow: 0 0 5px #4dabf7;
+}
+
 .signup-underline {
-    width: 90px;      /* change la largeur si tu veux */
+    width: 50%;
     height: 2px;
-    background-color: rgb(31,72,161); /* même couleur que le lien */
-    margin: 5px auto 0;
-    border-radius: 5px;
+    background: linear-gradient(90deg, transparent, rgb(31, 72, 161), transparent);
+    margin: 20px auto 0;
+}
+
+/* ========== RESPONSIVE ========== */
+@media (max-height: 600px) {
+    body {
+        align-items: flex-start;
+        padding-top: 20px;
+        overflow-y: auto;
+    }
+    .login-container {
+        margin-bottom: 20px;
+    }
 }
