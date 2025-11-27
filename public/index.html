@@ -6,16 +6,39 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap">
     <title>MonAgendaPro</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="icon" type="image/png" href="" />
 </head>
 
 <body>
+
+<img src="./IMG-Fond-J&N.png" class="IMG-Fond-J-N">
+
+
+  <div class="scroll-next1">
+    <a href="#services" class="scroll-down1">
+      <i class="fa fa-angle-down scroll-down-icon1"></i>
+    </a>
+  </div>
+
+
 
 <div class="ecran-fixe">
 <div class="boutons-container">
     <a href="./views/login.html" class="btn-rectangle">Se connecter</a>
     <a href="./views/register.html" class="btn-rectangle">S'inscrire</a>
 </div>
+
+</div>
+
+  <p class="texte-IMG-Fond-J-N"><h1>L'Avenir de la Gestion d'Événements est Ici.</h1><br>
+  <h3>Centralisez, organisez et découvrez. Une plateforme intuitive conçue pour les créateurs et les participants exigeants.</h3><br>
+  Ne perdez plus de temps avec des organisations complexes. Notre plateforme offre une solution tout-en-un <br>
+  pour donner vie à vos projets. Que vous organisiez une conférence internationale, <br>
+  un hackathon intense ou un simple workshop, nous vous fournissons les outils pour réussir. <br>
+  Design épuré, fluidité maximale et expérience utilisateur repensée : <br>
+  bienvenue dans la nouvelle ère de l'événementiel.</p>
+
 
 <div class="orbit orbit1">
     <div class="cercle1"></div>
@@ -27,17 +50,10 @@
     <div class="cercle3"></div>
 </div>
 
+  <a href="./index.html" class="titre-barres"><span>MonAgendaPro</span></a></div>
 
 <div class="texte-container">
   <div class="rectangle1"></div>
-  <div class="bar-top-1"></div>
-  <div class="bar-top-2"></div>
-
-  <a href="./index.html" class="titre-barres"><span>MonAgendaPro</span></a>
-
-  <div class="bar-bottom-2"></div>
-  <div class="bar-bottom-1"></div>
-</div>
 </div>
 
 
@@ -45,6 +61,14 @@
       <spline-viewer url="https://prod.spline.design/e0tP9lJ6G7-APtxP/scene.splinecode"></spline-viewer>
     </section>
 
-    <script src="script.js"></script>
-</body>
+  <script>
+    document.querySelector('.scroll-down').addEventListener('click', function(e) {
+      e.preventDefault();
+      window.scrollTo({
+        top: document.body.scrollHeight,
+        behavior: 'smooth'
+      });
+    });
+  </script>
+  </body>
 </html>
