@@ -102,6 +102,79 @@ width: 1920px;
     z-index: 0;          /* derrière autres éléments si nécessaire */
 }
 
+.cercle4 {
+    position: absolute;
+    top: 250%;               /* centre vertical */
+    left: 3%;              /* centre horizontal */
+    transform: translate(-50%, -50%);
+    width: 600px;           /* diamètre */
+    height: 600px;
+    border-radius: 50%;     /* cercle parfait */
+    background: radial-gradient(circle, rgb(31, 72, 161) 0%, rgba(31, 72, 161) 70%);
+    filter: blur(350px);     /* flou intense sur tout le cercle */
+    z-index: 0;             /* derrière autres éléments si nécessaire */
+}
+.cercle4-2 {
+    position: absolute;
+    top: 250%;               /* centre vertical */
+    left: 3%;              /* centre horizontal */
+    transform: translate(-50%, -50%);
+    width: 600px;           /* diamètre */
+    height: 600px;
+    border-radius: 50%;     /* cercle parfait */
+    background: radial-gradient(circle, rgb(31, 72, 161) 0%, rgba(31, 72, 161) 70%);
+    filter: blur(350px);     /* flou intense sur tout le cercle */
+    z-index: 0;             /* derrière autres éléments si nécessaire */
+}
+.cercle4-3 {
+    position: absolute;
+    top: 250%;               /* centre vertical */
+    left: 50%;              /* centre horizontal */
+    transform: translate(-50%, -50%);
+    width: 300px;           /* diamètre */
+    height: 300px;
+    border-radius: 50%;     /* cercle parfait */
+    background: radial-gradient(circle, rgb(31, 72, 161) 0%, rgba(31, 72, 161) 70%);
+    filter: blur(190px);     /* flou intense sur tout le cercle */
+    z-index: 0;             /* derrière autres éléments si nécessaire */
+}
+
+.cercle5 {
+    position: absolute;
+    top: 440%;               /* centre vertical */
+    left: 50%;              /* centre horizontal */
+    transform: translate(-50%, -50%);
+    width: 600px;           /* diamètre */
+    height: 600px;
+    border-radius: 50%;     /* cercle parfait */
+    background: radial-gradient(circle, rgb(31, 72, 161) 0%, rgba(31, 72, 161) 70%);
+    filter: blur(350px);     /* flou intense sur tout le cercle */
+    z-index: 0;          /* derrière autres éléments si nécessaire */
+}
+.cercle5-2 {
+    position: absolute;
+    top: 440%;               /* centre vertical */
+    left: 50%;              /* centre horizontal */
+    transform: translate(-50%, -50%);
+    width: 600px;           /* diamètre */
+    height: 600px;
+    border-radius: 50%;     /* cercle parfait */
+    background: radial-gradient(circle, rgb(31, 72, 161) 0%, rgba(31, 72, 161) 70%);
+    filter: blur(350px);     /* flou intense sur tout le cercle */
+    z-index: 0;          /* derrière autres éléments si nécessaire */
+}
+.cercle5-3 {
+    position: absolute;
+    top: 440%;               /* centre vertical */
+    left: 50%;              /* centre horizontal */
+    transform: translate(-50%, -50%);
+    width: 300px;           /* diamètre */
+    height: 300px;
+    border-radius: 50%;     /* cercle parfait */
+    background: radial-gradient(circle, rgb(31, 72, 161) 0%, rgba(31, 72, 161) 70%);
+    filter: blur(190px);     /* flou intense sur tout le cercle */
+    z-index: 0;             /* derrière autres éléments si nécessaire */
+}
 
 .orbit {
     position: absolute;
@@ -120,6 +193,21 @@ width: 1920px;
 
 /* cercle 3 tourne dans l'autre sens */
 .orbit3 {
+    animation: rotate3 2s linear infinite;
+}
+
+.orbit4 {
+    animation: rotate1 3s linear infinite;
+}
+.orbit4-2 {
+    animation: rotate3 2s linear infinite;
+}
+
+/* cercle 3 tourne dans l'autre sens */
+.orbit5 {
+    animation: rotate1 3s linear infinite;
+}
+.orbit5-2 {
     animation: rotate3 2s linear infinite;
 }
 
