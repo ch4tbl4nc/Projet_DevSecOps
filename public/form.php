@@ -1,5 +1,6 @@
 <?php
-include '../privée/database.php';
+use Privee\Database;
+$pdo = Database::getPdo();
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
   $name = $_POST['name'];
