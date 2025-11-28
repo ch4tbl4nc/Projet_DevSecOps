@@ -57,7 +57,7 @@ body {
   border-radius: 12px;
   box-shadow: var(--shadow);
   max-width: 1200px;
-  margin: 0 auto 40px auto;
+  margin-bottom: 40px;
   border: var(--main-border);
 }
 

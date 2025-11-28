@@ -119,7 +119,7 @@ $events = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
           <!-- Aperçu de la carte -->
           <div class="map-preview">
-            <iframe id="map-iframe" src=""></iframe>
+            <iframe id="map-iframe" src="" title="Carte de localisation de l'événement"></iframe>
           </div>
 
           <button type="submit" class="btn-submit">Créer l'événement</button>

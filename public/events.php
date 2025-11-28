@@ -50,9 +50,11 @@ $events = $stmt->fetchAll(PDO::FETCH_ASSOC);
               $startTime = date('H:i', strtotime($event['start_time']));
               $endTime = date('H:i', strtotime($event['end_time']));
             ?>
-            <div class="event-card" onclick="showOnMap(this)" 
-                 data-address="<?= $fullAddress ?>"
-                 data-name="<?= $eventName ?>">
+              <div class="event-card" onclick="showOnMap(this)" 
+                onkeydown="if(event.key==='Enter'){showOnMap(this);}"
+                tabindex="0"
+                data-address="<?= $fullAddress ?>"
+                data-name="<?= $eventName ?>">
               <h3><?= $eventName ?></h3>
               <div class="event-info">
                 <span class="icon">📅</span>
@@ -89,6 +91,7 @@ $events = $stmt->fetchAll(PDO::FETCH_ASSOC);
         <iframe 
           id="map-iframe"
           src=""
+          title="Carte de localisation de l'événement"
           allowfullscreen="" 
           loading="lazy" 
           referrerpolicy="no-referrer-when-downgrade">
