@@ -2,7 +2,7 @@
 $host = 'localhost';
 $dbname = 'guardia_events';
 $username = 'root';
-$password = ''; // Vide par défaut sur XAMPP
+$password = 'guardiaRoot'; // Vide par défaut sur XAMPP
 
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $username, $password);
