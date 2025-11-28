@@ -102,6 +102,9 @@ body, html {
     display: flex;
     flex-direction: column;
     gap: 20px;
+    
+    /* AJOUTE CETTE LIGNE : */
+    margin-right: 10%;  /* Plus le chiffre est grand, plus ça va à gauche */
 }
 
 .btn-rectangle {
@@ -267,4 +270,173 @@ footer {
         width: 100%;
         font-size: 20px;
     }
+}
+
+
+
+
+/* =========================================
+   ANIMATION HERO SECTION (THÈME ÉVÉNEMENT)
+   ========================================= */
+
+/* 1. Animation des barres (Ouverture comme un écran 16/9) */
+.bar-deco {
+    transform-origin: center;
+    animation: openBars 1.5s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+}
+
+@keyframes openBars {
+    from { 
+        transform: scaleX(0); 
+        opacity: 0;
+    }
+    to { 
+        transform: scaleX(1); 
+        opacity: 1;
+    }
+}
+
+/* 2. Animation du Titre (Effet Néon / Pulsation) */
+.titre-barres {
+    animation: neonPulse 3s infinite alternate;
+}
+
+@keyframes neonPulse {
+    0% {
+        text-shadow: 
+            0 0 5px rgba(255,255,255,0.1),
+            0 0 10px rgba(255,255,255,0.1);
+        transform: scale(1);
+    }
+    100% {
+        text-shadow: 
+            0 0 10px rgba(255,255,255,0.8),
+            0 0 20px rgba(31, 72, 161, 0.6),
+            0 0 40px rgba(31, 72, 161, 0.4);
+        transform: scale(1.02); /* Léger zoom avant */
+    }
+}
+
+/* 3. Apparition des boutons (Glissement vers le haut) */
+.boutons-container {
+    opacity: 0; /* Caché au début */
+    animation: slideUpFade 1s ease-out forwards;
+    animation-delay: 0.8s; /* Attend que les barres soient ouvertes */
+}
+
+@keyframes slideUpFade {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 4. Effet de "Spotlight" derrière le texte (Ambiance concert/tech) */
+.hero-text-box::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 120%;
+    height: 120%;
+    background: radial-gradient(circle, rgba(31, 72, 161, 0.2) 0%, rgba(0,0,0,0) 70%);
+    z-index: -1;
+    animation: spotlightRotate 10s linear infinite;
+    pointer-events: none;
+}
+
+@keyframes spotlightRotate {
+    0% { opacity: 0.3; transform: translate(-50%, -50%) scale(0.8); }
+    50% { opacity: 0.6; transform: translate(-50%, -50%) scale(1.1); }
+    100% { opacity: 0.3; transform: translate(-50%, -50%) scale(0.8); }
+}
+
+/* Petit ajustement pour que le texte reste lisible par-dessus le spotlight */
+.hero-text-box {
+    position: relative;
+    z-index: 2;
+}
+
+
+
+
+
+
+
+
+
+/* =========================================
+   TEXTURE & AMBIANCE (POUR REMPLIR LE VIDE)
+   ========================================= */
+
+/* 1. Grille Cybernétique en arrière-plan */
+.hero-section {
+    /* On ajoute une grille bleu très foncé par-dessus le noir */
+    background-image: 
+        linear-gradient(rgba(31, 72, 161, 0.1) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(31, 72, 161, 0.1) 1px, transparent 1px);
+    
+    /* Taille des carreaux de la grille */
+    background-size: 40px 40px;
+    
+    /* Positionnement pour que la grille commence bien */
+    background-position: center center;
+}
+
+/* 2. Effet Vignette + Texture (Surcouche) */
+.hero-section::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none; /* Laisse passer les clics */
+    z-index: 1; /* Juste devant le fond mais derrière le texte */
+    
+    /* Double effet : 
+       1. Radial Gradient : Assombrit les coins (Vignette)
+       2. Repeating Gradient : Crée des fines lignes (Scanlines) style écran TV
+    */
+    background: 
+        radial-gradient(circle at center, transparent 0%, black 100%),
+        repeating-linear-gradient(
+            0deg,
+            transparent,
+            transparent 2px,
+            rgba(0, 0, 0, 0.2) 2px,
+            rgba(0, 0, 0, 0.2) 4px
+        );
+}
+
+/* 3. Particules d'ambiance (Poussière d'étoiles) */
+.background-animation::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0.4;
+    z-index: -1;
+    
+    /* Crée des petits points blancs aléatoires */
+    background-image: 
+        radial-gradient(white 1px, transparent 1px),
+        radial-gradient(white 1px, transparent 1px);
+    background-size: 50px 50px;
+    background-position: 0 0, 25px 25px;
+    
+    animation: floatingDust 60s linear infinite;
+}
+
+@keyframes floatingDust {
+    from { background-position: 0 0, 25px 25px; }
+    to { background-position: 1000px 1000px, 1025px 1025px; }
 }
