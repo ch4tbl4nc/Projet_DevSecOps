@@ -50,8 +50,10 @@ $events = $stmt->fetchAll(PDO::FETCH_ASSOC);
               $startTime = date('H:i', strtotime($event['start_time']));
               $endTime = date('H:i', strtotime($event['end_time']));
             ?>
-              <div class="event-card" onclick="showOnMap(this)" 
-                onkeydown="if(event.key==='Enter'){showOnMap(this);}"
+              <div class="event-card" role="button"
+                onclick="showOnMap(this)"
+                onkeydown="if(event.key==='Enter'||event.key===' '){showOnMap(this);event.preventDefault();}"
+                onkeyup="if(event.key===' '){showOnMap(this);event.preventDefault();}"
                 tabindex="0"
                 data-address="<?= $fullAddress ?>"
                 data-name="<?= $eventName ?>">
