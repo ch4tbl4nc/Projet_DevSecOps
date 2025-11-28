@@ -34,8 +34,6 @@ jobs:
         uses: SonarSource/sonarqube-scan-action@v2
         with:
           projectBaseDir: .
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
