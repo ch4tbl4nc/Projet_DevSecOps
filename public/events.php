@@ -5,7 +5,7 @@ $stmt = $pdo->query("SELECT * FROM events ORDER BY date DESC, start_time DESC");
 $events = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 <!DOCTYPE html>
-<html>
+<html lang="fr" xml:lang="fr">
   <head>
     <title>Événements GUARDIA</title>
     <meta charset="utf-8">
