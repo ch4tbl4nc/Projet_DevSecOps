@@ -3,10 +3,10 @@ namespace Privee;
 
 class Database {
     public static function getPdo() {
-        $host = 'localhost';
-        $dbname = 'guardia_events';
-        $username = 'root';
-        $password = 'guardiaRoot'; // Vide par défaut sur XAMPP
+        $host = getenv('DB_HOST');
+        $dbname = getenv('DB_NAME');
+        $username = getenv('DB_USER');
+        $password = getenv('DB_PASS');
 
         try {
             $pdo = new \PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $username, $password);
