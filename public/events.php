@@ -79,10 +79,8 @@ try {
                 $timeDisplay = $startTime . ' - ' . $endTime;
               }
             ?>
-            <div class="event-card" onclick="showOnMap(this)" 
+            <button type="button" class="event-card" onclick="showOnMap(this)" 
                  onkeydown="if(event.key === 'Enter') showOnMap(this)"
-                 tabindex="0"
-                 role="button"
                  data-address="<?= $fullAddress ?>"
                  data-name="<?= $eventName ?>">
               <?php if($event['image_path']): ?>
@@ -111,7 +109,7 @@ try {
               <?php if($event['theme']): ?>
                 <span class="event-theme"><?= htmlspecialchars($event['theme']) ?></span>
               <?php endif; ?>
-            </div>
+            </button>
           <?php endforeach; ?>
         <?php else: ?>
           <div class="no-events">

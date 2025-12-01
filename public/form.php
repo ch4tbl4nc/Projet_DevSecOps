@@ -177,8 +177,8 @@ $events = $stmt->fetchAll(PDO::FETCH_ASSOC);
           </div>
 
           <!-- Durée de l'événement -->
-          <div class="form-group">
-            <label>Durée de l'événement <span class="required">*</span></label>
+          <fieldset class="form-group" style="border: none; padding: 0; margin: 0;">
+            <legend>Durée de l'événement <span class="required">*</span></legend>
             <div style="display: flex; gap: 20px; margin-top: 10px;">
               <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
                 <input type="radio" name="duration_type" value="single" checked onchange="toggleDurationType()">
@@ -189,7 +189,7 @@ $events = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <span>Plusieurs jours</span>
               </label>
             </div>
-          </div>
+          </fieldset>
 
           <!-- Date et heures pour une journée -->
           <div id="single-day-section">
