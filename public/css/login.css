@@ -106,7 +106,6 @@ body, html {
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 10px;
     font-size: 16px;
-    color: white;
     outline: none;
     box-sizing: border-box; /* Empêche l'input de dépasser */
     transition: 0.3s;
@@ -147,11 +146,11 @@ body, html {
     margin-top: 25px;
     font-size: 14px;
     line-height: 1.6;
-    color: #ccc;
+    color: #e0e0e0;
 }
 
 .signup-link {
-    color: #4dabf7;
+    color: #1a8cff;
     text-decoration: none;
     font-weight: bold;
     transition: color 0.3s;

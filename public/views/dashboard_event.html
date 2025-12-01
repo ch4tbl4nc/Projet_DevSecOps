@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
   <head>
     <title>Événements GUARDIA</title>
     <meta charset="utf-8">
@@ -38,9 +38,10 @@
         <!-- Les événements seront chargés ici dynamiquement -->
         <!-- Pour l'instant, des exemples statiques -->
         
-        <div class="event-card" onclick="showOnMap(this)" 
-           data-address="22 Terr. Bellini, 92800 Puteaux, France"
-           data-name="Conférence Cybersécurité 2025">
+          <button type="button" class="event-card"
+            onclick="showOnMap(this)" 
+            data-address="22 Terr. Bellini, 92800 Puteaux, France"
+            data-name="Conférence Cybersécurité 2025">
         <h3>🔐 Conférence Cybersécurité 2025</h3>
         <div class="event-info">
           <span class="icon">📅</span>
@@ -60,9 +61,10 @@
         <span class="event-theme">Sécurité</span>
       </div>
 
-      <div class="event-card" onclick="showOnMap(this)"
-           data-address="10 Rue de la Paix, 75002 Paris, France"
-           data-name="Workshop Pentesting">
+       <button type="button" class="event-card"
+         onclick="showOnMap(this)"
+         data-address="10 Rue de la Paix, 75002 Paris, France"
+         data-name="Workshop Pentesting">
         <h3>💻 Workshop Pentesting</h3>
         <div class="event-info">
           <span class="icon">📅</span>
@@ -82,9 +84,10 @@
         <span class="event-theme">Workshop</span>
       </div>
 
-      <div class="event-card" onclick="showOnMap(this)"
-           data-address="5 Avenue des Champs, 69001 Lyon, France"
-           data-name="Hackathon 2025">
+       <button type="button" class="event-card"
+         onclick="showOnMap(this)"
+         data-address="5 Avenue des Champs, 69001 Lyon, France"
+         data-name="Hackathon 2025">
         <h3>🏆 Hackathon 2025</h3>
         <div class="event-info">
           <span class="icon">📅</span>
@@ -102,8 +105,8 @@
           Compétition de hacking éthique sur 12h avec des défis passionnants. Prix pour les 3 meilleures équipes !
         </div>
         <span class="event-theme">Hackathon</span>
-      </div>
-    </div>
+      </button>
+    </button>
 
       <!-- Carte Google Maps -->
     <div class="map-container">
@@ -111,25 +114,26 @@
       <iframe 
         id="map-iframe"
         src=""
+        title="Carte de localisation de l'événement"
         allowfullscreen="" 
         loading="lazy" 
         referrerpolicy="no-referrer-when-downgrade">
       </iframe>
-    </div>
+    </button>
 
     <script>
       // Fonction pour afficher un événement sur la carte
       function showOnMap(eventCard) {
         // Retirer la classe "selected" de toutes les cartes
-        document.querySelectorAll('.event-card').forEach(card => {
+        for (const card of document.querySelectorAll('.event-card')) {
           card.classList.remove('selected');
-        });
+        }
 
         // Ajouter la classe "selected" à la carte cliquée
         eventCard.classList.add('selected');
 
-        const address = eventCard.getAttribute('data-address');
-        const eventName = eventCard.getAttribute('data-name');
+        const address = eventCard.dataset.data-address;
+        const eventName = eventCard.dataset.data-name;
         
         const encodedAddress = encodeURIComponent(address);
         const iframe = document.getElementById('map-iframe');
@@ -140,7 +144,7 @@
       }
 
       // Afficher le premier événement par défaut au chargement
-      window.addEventListener('DOMContentLoaded', () => {
+      globalThis.addEventListener('DOMContentLoaded', () => {
         const firstEvent = document.querySelector('.event-card');
         if (firstEvent) {
           showOnMap(firstEvent);

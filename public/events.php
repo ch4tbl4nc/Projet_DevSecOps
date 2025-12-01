@@ -50,11 +50,8 @@ $events = $stmt->fetchAll(PDO::FETCH_ASSOC);
               $startTime = date('H:i', strtotime($event['start_time']));
               $endTime = date('H:i', strtotime($event['end_time']));
             ?>
-              <div class="event-card" role="button"
+              <button type="button" class="event-card"
                 onclick="showOnMap(this)"
-                onkeydown="if(event.key==='Enter'||event.key===' '){showOnMap(this);event.preventDefault();}"
-                onkeyup="if(event.key===' '){showOnMap(this);event.preventDefault();}"
-                tabindex="0"
                 data-address="<?= $fullAddress ?>"
                 data-name="<?= $eventName ?>">
               <h3><?= $eventName ?></h3>
@@ -90,12 +87,12 @@ $events = $stmt->fetchAll(PDO::FETCH_ASSOC);
       <!-- Carte Google Maps à droite -->
       <div class="map-container">
         <div class="info-box" id="map-info">📍 Cliquez sur un événement pour voir sa localisation</div>
-        <iframe 
+        <iframe
           id="map-iframe"
           src=""
           title="Carte de localisation de l'événement"
-          allowfullscreen="" 
-          loading="lazy" 
+          allowfullscreen=""
+          loading="lazy"
           referrerpolicy="no-referrer-when-downgrade">
         </iframe>
       </div>

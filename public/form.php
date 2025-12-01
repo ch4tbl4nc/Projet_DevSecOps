@@ -1,4 +1,5 @@
-<?php
+<?
+php
 use Privee\Database;
 $pdo = Database::getPdo();
 

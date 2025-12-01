@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
   <head>
     <title>Créer un Événement - GUARDIA</title>
     <meta charset="utf-8">
@@ -85,7 +85,7 @@
           </div>
 
           <div class="map-preview">
-            <iframe id="map-iframe" src=""></iframe>
+            <iframe id="map-iframe" src="" title="map"></iframe>
           </div>
 
           <button type="submit" class="btn-submit">Créer l'événement</button>
@@ -100,21 +100,21 @@
 
       // Charger le thème sauvegardé
       if(localStorage.getItem('theme') === 'dark') {
-        html.setAttribute('data-theme', 'dark');
+        html.dataset.theme = 'dark';
         btn.textContent = '☀️ Mode Jour';
         btn.style.background = '#1967d2';
         btn.style.color = 'white';
       }
 
       btn.addEventListener('click', () => {
-        if (html.getAttribute('data-theme') === 'dark') {
-          html.removeAttribute('data-theme');
+        if (html.dataset.theme === 'dark') {
+          delete html.dataset.theme;
           localStorage.setItem('theme', 'light');
           btn.textContent = '🌙 Mode Nuit';
           btn.style.background = 'white';
           btn.style.color = 'black';
         } else {
-          html.setAttribute('data-theme', 'dark');
+          html.dataset.theme = 'dark';
           localStorage.setItem('theme', 'dark');
           btn.textContent = '☀️ Mode Jour';
           btn.style.background = '#1967d2';
