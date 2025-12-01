@@ -1,9 +1,24 @@
 <?php
+require_once __DIR__ . '/security-headers.php';
 require_once __DIR__ . '/../privée/database.php';
 use Privee\Database;
-$pdo = Database::getPdo();
-$stmt = $pdo->query("SELECT * FROM events ORDER BY date DESC, start_time DESC");
-$events = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+session_start();
+
+// Vérifier l'authentification
+if (!isset($_SESSION['user_id'])) {
+    header('Location: views/login.html');
+    exit;
+}
+
+try {
+    $pdo = Database::getPdo();
+    $stmt = $pdo->query("SELECT * FROM events ORDER BY date DESC, start_time DESC");
+    $events = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (Exception $e) {
+    error_log("Events fetch error: " . $e->getMessage());
+    $events = [];
+}
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -66,6 +81,8 @@ $events = $stmt->fetchAll(PDO::FETCH_ASSOC);
             ?>
             <div class="event-card" onclick="showOnMap(this)" 
                  onkeydown="if(event.key === 'Enter') showOnMap(this)"
+                 tabindex="0"
+                 role="button"
                  data-address="<?= $fullAddress ?>"
                  data-name="<?= $eventName ?>">
               <?php if($event['image_path']): ?>

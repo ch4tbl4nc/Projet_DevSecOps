@@ -1,57 +1,108 @@
 <?php
+require_once __DIR__ . '/security-headers.php';
 require_once __DIR__ . '/../privée/database.php';
 use Privee\Database;
-$pdo = Database::getPdo();
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-  $name = $_POST['name'];
-  $theme = $_POST['theme'];
-  $description = $_POST['description'];
-  $address = $_POST['address'];
-  $city = $_POST['city'];
-  $postal_code = $_POST['postal_code'];
-  $country = $_POST['country'];
-  $duration_type = $_POST['duration_type'];
+session_start();
 
-  if ($duration_type === 'single') {
-    $date = $_POST['date'];
-    $start_time = $_POST['heure_debut'];
-    $end_time = $_POST['heure_fin'];
-    $end_date = null;
-  } else {
-    $date = $_POST['date_debut_multi'];
-    $start_time = $_POST['heure_debut_multi'];
-    $end_time = $_POST['heure_fin_multi'];
-    $end_date = $_POST['date_fin_multi'];
-  }
-
-  // Gestion de l'upload d'image
-  $image_path = null;
-  if (isset($_FILES['event_image']) && $_FILES['event_image']['error'] === UPLOAD_ERR_OK) {
-    $upload_dir = __DIR__ . '/uploads/events/';
-    if (!is_dir($upload_dir)) {
-      mkdir($upload_dir, 0777, true);
-    }
-    
-    $file_extension = strtolower(pathinfo($_FILES['event_image']['name'], PATHINFO_EXTENSION));
-    $allowed_extensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
-    
-    if (in_array($file_extension, $allowed_extensions)) {
-      $unique_name = uniqid('event_', true) . '.' . $file_extension;
-      $destination = $upload_dir . $unique_name;
-      
-      if (move_uploaded_file($_FILES['event_image']['tmp_name'], $destination)) {
-        $image_path = 'uploads/events/' . $unique_name;
-      }
-    }
-  }
-
-  $stmt = $pdo->prepare("INSERT INTO events (name, theme, description, date, start_time, end_time, end_date, address, city, postal_code, country, image_path) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-  $stmt->execute([$name, $theme, $description, $date, $start_time, $end_time, $end_date, $address, $city, $postal_code, $country, $image_path]);
-
-  header('Location: events.php');
-  exit;
+// Vérifier l'authentification
+if (!isset($_SESSION['user_id'])) {
+    header('Location: views/login.html');
+    exit;
 }
+
+$pdo = Database::getPdo();
+$error = null;
+$success = false;
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Vérification CSRF
+    if (!isset($_POST['csrf_token']) || !verifyCsrfToken($_POST['csrf_token'])) {
+        $error = 'Erreur de sécurité. Veuillez réessayer.';
+    } else {
+        // Validation et nettoyage des entrées
+        $name = sanitizeInput($_POST['name'] ?? '');
+        $theme = sanitizeInput($_POST['theme'] ?? '');
+        $description = sanitizeInput($_POST['description'] ?? '');
+        $address = sanitizeInput($_POST['address'] ?? '');
+        $city = sanitizeInput($_POST['city'] ?? '');
+        $postalCode = sanitizeInput($_POST['postal_code'] ?? '');
+        $country = sanitizeInput($_POST['country'] ?? 'France');
+        $durationType = $_POST['duration_type'] ?? 'single';
+
+        // Validation des champs obligatoires
+        if (empty($name) || empty($address) || empty($city) || empty($postalCode)) {
+            $error = 'Veuillez remplir tous les champs obligatoires.';
+        } else {
+            if ($durationType === 'single') {
+                $date = $_POST['date'] ?? '';
+                $startTime = $_POST['heure_debut'] ?? '';
+                $endTime = $_POST['heure_fin'] ?? '';
+                $endDate = null;
+            } else {
+                $date = $_POST['date_debut_multi'] ?? '';
+                $startTime = $_POST['heure_debut_multi'] ?? '';
+                $endTime = $_POST['heure_fin_multi'] ?? '';
+                $endDate = $_POST['date_fin_multi'] ?? null;
+            }
+
+            // Validation des dates et heures
+            if (!validateDate($date) || !validateTime($startTime) || !validateTime($endTime)) {
+                $error = 'Date ou heure invalide.';
+            } elseif ($endDate !== null && !validateDate($endDate)) {
+                $error = 'Date de fin invalide.';
+            } else {
+                // Gestion de l'upload d'image sécurisé
+                $imagePath = null;
+                if (isset($_FILES['event_image']) && $_FILES['event_image']['error'] === UPLOAD_ERR_OK) {
+                    $uploadDir = __DIR__ . '/uploads/events/';
+                    if (!is_dir($uploadDir)) {
+                        mkdir($uploadDir, 0755, true);
+                    }
+                    
+                    $fileExtension = strtolower(pathinfo($_FILES['event_image']['name'], PATHINFO_EXTENSION));
+                    $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+                    $maxFileSize = 5 * 1024 * 1024; // 5MB
+                    
+                    // Vérification du type MIME réel
+                    $finfo = new finfo(FILEINFO_MIME_TYPE);
+                    $mimeType = $finfo->file($_FILES['event_image']['tmp_name']);
+                    $allowedMimes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+                    
+                    if (!in_array($fileExtension, $allowedExtensions)) {
+                        $error = 'Extension de fichier non autorisée.';
+                    } elseif (!in_array($mimeType, $allowedMimes)) {
+                        $error = 'Type de fichier non autorisé.';
+                    } elseif ($_FILES['event_image']['size'] > $maxFileSize) {
+                        $error = 'Fichier trop volumineux (max 5MB).';
+                    } else {
+                        $uniqueName = bin2hex(random_bytes(16)) . '.' . $fileExtension;
+                        $destination = $uploadDir . $uniqueName;
+                        
+                        if (move_uploaded_file($_FILES['event_image']['tmp_name'], $destination)) {
+                            $imagePath = 'uploads/events/' . $uniqueName;
+                        }
+                    }
+                }
+
+                if ($error === null) {
+                    try {
+                        $stmt = $pdo->prepare("INSERT INTO events (name, theme, description, date, start_time, end_time, end_date, address, city, postal_code, country, image_path) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                        $stmt->execute([$name, $theme, $description, $date, $startTime, $endTime, $endDate, $address, $city, $postalCode, $country, $imagePath]);
+
+                        header('Location: events.php?success=1');
+                        exit;
+                    } catch (Exception $e) {
+                        error_log("Event creation error: " . $e->getMessage());
+                        $error = 'Erreur lors de la création de l\'événement.';
+                    }
+                }
+            }
+        }
+    }
+}
+
+$csrfToken = generateCsrfToken();
 
 $stmt = $pdo->query("SELECT * FROM events ORDER BY date DESC, start_time DESC");
 $events = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -93,6 +144,14 @@ $events = $stmt->fetchAll(PDO::FETCH_ASSOC);
         </div>
 
         <form id="event-form" method="POST" action="form.php" enctype="multipart/form-data">
+          <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken) ?>">
+          
+          <?php if ($error): ?>
+          <div class="error-message" style="background: #ffebee; color: #c62828; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+            ⚠️ <?= htmlspecialchars($error) ?>
+          </div>
+          <?php endif; ?>
+          
           <!-- Informations générales -->
           <div class="form-group">
             <label for="name">Nom de l'événement <span class="required">*</span></label>

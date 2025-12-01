@@ -1,10 +1,33 @@
 sonar-project.properties
 .env
+.env.*
+.env.local
 
-# ZAP/ZapProxy Reports
-report_*.md
-report_*.html
-report_*.json
-*.html.md
-/zap-report.*
-/report.*
+# Fichiers sensibles
+privée/
+sextape_de_ch4tbl4nc/
+database_schema/
+*.sql
+*.db
+*.sqlite
+
+# Fichiers de configuration avec credentials
+config/database.php
+database.php
+
+# Logs et cache
+*.log
+logs/
+cache/
+tmp/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Uploads utilisateurs
+public/uploads/
