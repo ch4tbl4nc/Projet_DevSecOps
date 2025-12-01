@@ -6,7 +6,7 @@ $stmt = $pdo->query("SELECT * FROM events ORDER BY date DESC, start_time DESC");
 $events = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 <!DOCTYPE html>
-<html>
+<html lang="fr">
   <head>
     <title>Événements GUARDIA</title>
     <meta charset="utf-8">
@@ -65,6 +65,7 @@ $events = $stmt->fetchAll(PDO::FETCH_ASSOC);
               }
             ?>
             <div class="event-card" onclick="showOnMap(this)" 
+                 onkeydown="if(event.key === 'Enter') showOnMap(this)"
                  data-address="<?= $fullAddress ?>"
                  data-name="<?= $eventName ?>">
               <?php if($event['image_path']): ?>
@@ -110,7 +111,8 @@ $events = $stmt->fetchAll(PDO::FETCH_ASSOC);
           src=""
           allowfullscreen="" 
           loading="lazy" 
-          referrerpolicy="no-referrer-when-downgrade">
+          referrerpolicy="no-referrer-when-downgrade"
+          title="map">
         </iframe>
       </div>
     </div>

@@ -57,7 +57,7 @@ $stmt = $pdo->query("SELECT * FROM events ORDER BY date DESC, start_time DESC");
 $events = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 <!DOCTYPE html>
-<html>
+<html lang="fr">
   <head>
     <title>Créer un Événement - GUARDIA</title>
     <meta charset="utf-8">
@@ -198,7 +198,7 @@ $events = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
           <!-- Aperçu de la carte -->
           <div class="map-preview">
-            <iframe id="map-iframe" src=""></iframe>
+            <iframe id="map-iframe" src="" title="map"></iframe>
           </div>
 
           <button type="submit" class="btn-submit">Créer l'événement</button>
