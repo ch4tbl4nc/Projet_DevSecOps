@@ -1,5 +1,5 @@
-<?
-php
+<?php
+require_once __DIR__ . '/../privée/database.php';
 use Privee\Database;
 $pdo = Database::getPdo();
 
@@ -7,16 +7,47 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
   $name = $_POST['name'];
   $theme = $_POST['theme'];
   $description = $_POST['description'];
-  $date = $_POST['date'];
-  $start_time = $_POST['heure_debut'];
-  $end_time = $_POST['heure_fin'];
   $address = $_POST['address'];
   $city = $_POST['city'];
   $postal_code = $_POST['postal_code'];
   $country = $_POST['country'];
+  $duration_type = $_POST['duration_type'];
 
-  $stmt = $pdo->prepare("INSERT INTO events (name, theme, description, date, start_time, end_time, address, city, postal_code, country) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-  $stmt->execute([$name, $theme, $description, $date, $start_time, $end_time, $address, $city, $postal_code, $country]);
+  if ($duration_type === 'single') {
+    $date = $_POST['date'];
+    $start_time = $_POST['heure_debut'];
+    $end_time = $_POST['heure_fin'];
+    $end_date = null;
+  } else {
+    $date = $_POST['date_debut_multi'];
+    $start_time = $_POST['heure_debut_multi'];
+    $end_time = $_POST['heure_fin_multi'];
+    $end_date = $_POST['date_fin_multi'];
+  }
+
+  // Gestion de l'upload d'image
+  $image_path = null;
+  if (isset($_FILES['event_image']) && $_FILES['event_image']['error'] === UPLOAD_ERR_OK) {
+    $upload_dir = __DIR__ . '/uploads/events/';
+    if (!is_dir($upload_dir)) {
+      mkdir($upload_dir, 0777, true);
+    }
+    
+    $file_extension = strtolower(pathinfo($_FILES['event_image']['name'], PATHINFO_EXTENSION));
+    $allowed_extensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+    
+    if (in_array($file_extension, $allowed_extensions)) {
+      $unique_name = uniqid('event_', true) . '.' . $file_extension;
+      $destination = $upload_dir . $unique_name;
+      
+      if (move_uploaded_file($_FILES['event_image']['tmp_name'], $destination)) {
+        $image_path = 'uploads/events/' . $unique_name;
+      }
+    }
+  }
+
+  $stmt = $pdo->prepare("INSERT INTO events (name, theme, description, date, start_time, end_time, end_date, address, city, postal_code, country, image_path) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+  $stmt->execute([$name, $theme, $description, $date, $start_time, $end_time, $end_date, $address, $city, $postal_code, $country, $image_path]);
 
   header('Location: events.php');
   exit;
@@ -26,7 +57,7 @@ $stmt = $pdo->query("SELECT * FROM events ORDER BY date DESC, start_time DESC");
 $events = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 <!DOCTYPE html>
-<html lang="fr" xml:lang="fr">
+<html>
   <head>
     <title>Créer un Événement - GUARDIA</title>
     <meta charset="utf-8">
@@ -61,7 +92,7 @@ $events = $stmt->fetchAll(PDO::FETCH_ASSOC);
           ✓ Événement créé avec succès !
         </div>
 
-        <form id="event-form" method="POST" action="form.php">
+        <form id="event-form" method="POST" action="form.php" enctype="multipart/form-data">
           <!-- Informations générales -->
           <div class="form-group">
             <label for="name">Nom de l'événement <span class="required">*</span></label>
@@ -78,23 +109,70 @@ $events = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <textarea id="description" name="description" placeholder="Décrivez votre événement..."></textarea>
           </div>
 
-          <!-- Date et heures -->
-          <div class="form-row">
-            <div class="form-group">
-              <label for="date">Date <span class="required">*</span></label>
-              <input type="date" id="date" name="date" required>
-            </div>
-            <div class="form-group">
-              <label for="heure_debut">Heure de début <span class="required">*</span></label>
-              <input type="time" id="heure_debut" name="heure_debut" required>
-            </div>
-            <div class="form-group">
-              <label for="heure_fin">Heure de fin <span class="required">*</span></label>
-              <input type="time" id="heure_fin" name="heure_fin" required>
+          <div class="form-group">
+            <label for="event_image">Image de l'événement (optionnel)</label>
+            <input type="file" id="event_image" name="event_image" accept="image/*" onchange="previewImage(event)">
+            <div id="image-preview" style="margin-top: 15px; display: none;">
+              <img id="preview-img" src="" alt="Aperçu" style="max-width: 100%; max-height: 300px; border-radius: 8px; border: 2px solid var(--border-color);">
             </div>
           </div>
 
-          
+          <!-- Durée de l'événement -->
+          <div class="form-group">
+            <label>Durée de l'événement <span class="required">*</span></label>
+            <div style="display: flex; gap: 20px; margin-top: 10px;">
+              <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                <input type="radio" name="duration_type" value="single" checked onchange="toggleDurationType()">
+                <span>Une journée</span>
+              </label>
+              <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                <input type="radio" name="duration_type" value="multi" onchange="toggleDurationType()">
+                <span>Plusieurs jours</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Date et heures pour une journée -->
+          <div id="single-day-section">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="date">Date <span class="required">*</span></label>
+                <input type="date" id="date" name="date" required>
+              </div>
+              <div class="form-group">
+                <label for="heure_debut">Heure de début <span class="required">*</span></label>
+                <input type="time" id="heure_debut" name="heure_debut" required>
+              </div>
+              <div class="form-group">
+                <label for="heure_fin">Heure de fin <span class="required">*</span></label>
+                <input type="time" id="heure_fin" name="heure_fin" required>
+              </div>
+            </div>
+          </div>
+
+          <!-- Date et heures pour plusieurs jours -->
+          <div id="multi-day-section" style="display: none;">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="date_debut_multi">Date de début <span class="required">*</span></label>
+                <input type="date" id="date_debut_multi" name="date_debut_multi">
+              </div>
+              <div class="form-group">
+                <label for="heure_debut_multi">Heure de début <span class="required">*</span></label>
+                <input type="time" id="heure_debut_multi" name="heure_debut_multi">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="date_fin_multi">Date de fin <span class="required">*</span></label>
+                <input type="date" id="date_fin_multi" name="date_fin_multi">
+              </div>
+              <div class="form-group">
+                <label for="heure_fin_multi">Heure de fin <span class="required">*</span></label>
+                <input type="time" id="heure_fin_multi" name="heure_fin_multi">
+              </div>
+            </div>
+          </div>
 
           <!-- Adresse -->
           <div class="form-group">
@@ -120,7 +198,7 @@ $events = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
           <!-- Aperçu de la carte -->
           <div class="map-preview">
-            <iframe id="map-iframe" src="" title="Carte de localisation de l'événement"></iframe>
+            <iframe id="map-iframe" src=""></iframe>
           </div>
 
           <button type="submit" class="btn-submit">Créer l'événement</button>
@@ -133,6 +211,24 @@ $events = $stmt->fetchAll(PDO::FETCH_ASSOC);
     </div>
 
     <script>
+      // Prévisualisation de l'image
+      function previewImage(event) {
+        const file = event.target.files[0];
+        const preview = document.getElementById('image-preview');
+        const previewImg = document.getElementById('preview-img');
+        
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            previewImg.src = e.target.result;
+            preview.style.display = 'block';
+          };
+          reader.readAsDataURL(file);
+        } else {
+          preview.style.display = 'none';
+        }
+      }
+
       // Mise à jour de la carte en temps réel
       const addressInput = document.getElementById('address');
       const cityInput = document.getElementById('city');
@@ -159,33 +255,71 @@ $events = $stmt->fetchAll(PDO::FETCH_ASSOC);
       postalCodeInput.addEventListener('input', updateMap);
       countryInput.addEventListener('input', updateMap);
 
+      // Basculer entre une journée et plusieurs jours
+      function toggleDurationType() {
+        const durationType = document.querySelector('input[name="duration_type"]:checked').value;
+        const singleDay = document.getElementById('single-day-section');
+        const multiDay = document.getElementById('multi-day-section');
+        
+        if (durationType === 'single') {
+          singleDay.style.display = 'block';
+          multiDay.style.display = 'none';
+          // Rendre les champs single obligatoires
+          document.getElementById('date').required = true;
+          document.getElementById('heure_debut').required = true;
+          document.getElementById('heure_fin').required = true;
+          // Rendre les champs multi optionnels
+          document.getElementById('date_debut_multi').required = false;
+          document.getElementById('heure_debut_multi').required = false;
+          document.getElementById('date_fin_multi').required = false;
+          document.getElementById('heure_fin_multi').required = false;
+        } else {
+          singleDay.style.display = 'none';
+          multiDay.style.display = 'block';
+          // Rendre les champs single optionnels
+          document.getElementById('date').required = false;
+          document.getElementById('heure_debut').required = false;
+          document.getElementById('heure_fin').required = false;
+          // Rendre les champs multi obligatoires
+          document.getElementById('date_debut_multi').required = true;
+          document.getElementById('heure_debut_multi').required = true;
+          document.getElementById('date_fin_multi').required = true;
+          document.getElementById('heure_fin_multi').required = true;
+        }
+      }
+
       // Gestion du formulaire
       document.getElementById('event-form').addEventListener('submit', function(e) {
-        // Pour tester sans PHP, décommentez la ligne suivante
-        // e.preventDefault();
+        const durationType = document.querySelector('input[name="duration_type"]:checked').value;
         
-        // Validation des heures
-        const heureDebut = document.getElementById('heure_debut').value;
-        const heureFin = document.getElementById('heure_fin').value;
-        
-        if (heureDebut && heureFin && heureFin <= heureDebut) {
-          alert('L\'heure de fin doit être après l\'heure de début');
-          e.preventDefault();
-          return false;
+        if (durationType === 'single') {
+          // Validation des heures pour une journée
+          const heureDebut = document.getElementById('heure_debut').value;
+          const heureFin = document.getElementById('heure_fin').value;
+          
+          if (heureDebut && heureFin && heureFin <= heureDebut) {
+            alert('L\'heure de fin doit être après l\'heure de début');
+            e.preventDefault();
+            return false;
+          }
+        } else {
+          // Validation pour plusieurs jours
+          const dateDebut = new Date(document.getElementById('date_debut_multi').value + ' ' + document.getElementById('heure_debut_multi').value);
+          const dateFin = new Date(document.getElementById('date_fin_multi').value + ' ' + document.getElementById('heure_fin_multi').value);
+          
+          if (dateFin <= dateDebut) {
+            alert('La date/heure de fin doit être après la date/heure de début');
+            e.preventDefault();
+            return false;
+          }
         }
-
-        // Afficher un message de succès (pour test sans PHP)
-        // document.getElementById('success-message').style.display = 'block';
-        // setTimeout(() => {
-        //   document.getElementById('event-form').reset();
-        //   mapIframe.src = '';
-        //   document.getElementById('success-message').style.display = 'none';
-        // }, 3000);
       });
 
       // Définir la date minimale à aujourd'hui
       const today = new Date().toISOString().split('T')[0];
       document.getElementById('date').setAttribute('min', today);
+      document.getElementById('date_debut_multi').setAttribute('min', today);
+      document.getElementById('date_fin_multi').setAttribute('min', today);
 
       /* === SCRIPT MODE NUIT === */
       const themeBtn = document.getElementById('theme-btn');
@@ -217,4 +351,3 @@ $events = $stmt->fetchAll(PDO::FETCH_ASSOC);
     </script>
   </body>
 </html>
- 

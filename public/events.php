@@ -1,11 +1,12 @@
 <?php
+require_once __DIR__ . '/../privée/database.php';
 use Privee\Database;
 $pdo = Database::getPdo();
 $stmt = $pdo->query("SELECT * FROM events ORDER BY date DESC, start_time DESC");
 $events = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 <!DOCTYPE html>
-<html lang="fr" xml:lang="fr">
+<html>
   <head>
     <title>Événements GUARDIA</title>
     <meta charset="utf-8">
@@ -46,22 +47,39 @@ $events = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <?php
               $fullAddress = htmlspecialchars($event['address'] . ', ' . $event['postal_code'] . ' ' . $event['city'] . ', ' . $event['country']);
               $eventName = htmlspecialchars($event['name']);
-              $eventDate = date('d F Y', strtotime($event['date']));
               $startTime = date('H:i', strtotime($event['start_time']));
               $endTime = date('H:i', strtotime($event['end_time']));
+              
+              // Gérer l'affichage selon si c'est un événement d'une journée ou plusieurs
+              if ($event['end_date']) {
+                // Événement sur plusieurs jours
+                $startDate = date('d F Y', strtotime($event['date']));
+                $endDate = date('d F Y', strtotime($event['end_date']));
+                $dateDisplay = 'Du ' . $startDate . ' au ' . $endDate;
+                $timeDisplay = $startTime . ' → ' . $endTime;
+              } else {
+                // Événement d'une journée
+                $eventDate = date('d F Y', strtotime($event['date']));
+                $dateDisplay = $eventDate;
+                $timeDisplay = $startTime . ' - ' . $endTime;
+              }
             ?>
-              <button type="button" class="event-card"
-                onclick="showOnMap(this)"
-                data-address="<?= $fullAddress ?>"
-                data-name="<?= $eventName ?>">
+            <div class="event-card" onclick="showOnMap(this)" 
+                 data-address="<?= $fullAddress ?>"
+                 data-name="<?= $eventName ?>">
+              <?php if($event['image_path']): ?>
+                <div class="event-image">
+                  <img src="<?= htmlspecialchars($event['image_path']) ?>" alt="<?= $eventName ?>">
+                </div>
+              <?php endif; ?>
               <h3><?= $eventName ?></h3>
               <div class="event-info">
                 <span class="icon">📅</span>
-                <span><?= $eventDate ?></span>
+                <span><?= $dateDisplay ?></span>
               </div>
               <div class="event-info">
                 <span class="icon">⏰</span>
-                <span><?= $startTime ?> - <?= $endTime ?></span>
+                <span><?= $timeDisplay ?></span>
               </div>
               <div class="event-info">
                 <span class="icon">📍</span>
@@ -87,12 +105,11 @@ $events = $stmt->fetchAll(PDO::FETCH_ASSOC);
       <!-- Carte Google Maps à droite -->
       <div class="map-container">
         <div class="info-box" id="map-info">📍 Cliquez sur un événement pour voir sa localisation</div>
-        <iframe
+        <iframe 
           id="map-iframe"
           src=""
-          title="Carte de localisation de l'événement"
-          allowfullscreen=""
-          loading="lazy"
+          allowfullscreen="" 
+          loading="lazy" 
           referrerpolicy="no-referrer-when-downgrade">
         </iframe>
       </div>
