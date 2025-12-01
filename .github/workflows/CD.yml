@@ -51,6 +51,13 @@ jobs:
           php-version: '8.2'
           extensions: pdo, pdo_mysql, mysqli
 
+      # Créer un index.php de redirection si absent
+      - name: Create index.php if not exists
+        run: |
+          if [ ! -f ./public/index.php ]; then
+            echo '<?php header("Location: /login.php"); ?>' > ./public/index.php
+          fi
+
       # Démarrer un serveur PHP local
       - name: Start PHP Server
         run: |
@@ -69,7 +76,7 @@ jobs:
 
       # Scan ZapProxy Full (plus complet, optionnel)
       - name: ZapProxy Full Scan
-        if: github.event.schedule == '0 2 * * *'  # Une fois par nuit
+        if: github.ref == 'refs/heads/main'
         uses: zaproxy/action-full-scan@v0.7.0
         with:
           target: 'http://127.0.0.1:8080'
@@ -87,9 +94,9 @@ jobs:
             report_md.md
             report_html.html
 
-      # Générer un rapport GitHub Issue si des vulnérabilités sont trouvées
+      # Générér un rapport GitHub Issue si des vulnérabilités sont trouvées
       - name: Create Issue on Vulnerabilities
-        if: failure()
+        if: failure() && github.event_name == 'push'
         uses: actions/github-script@v7
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -102,10 +109,14 @@ jobs:
             } else {
               body += 'Consultez les artifacts pour le rapport complet.';
             }
-            github.rest.issues.create({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              title: 'Security: ZapProxy vulnerabilities detected',
-              body: body,
-              labels: ['security', 'zap-scan']
-            });
+            try {
+              github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: 'Security: ZapProxy vulnerabilities detected',
+                body: body,
+                labels: ['security', 'zap-scan']
+              });
+            } catch(error) {
+              console.log('Note: Création d\'issue nécessite des permissions supplémentaires');
+            }
