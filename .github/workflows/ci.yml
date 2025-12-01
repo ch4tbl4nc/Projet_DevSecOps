@@ -52,6 +52,13 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # Installation de PHP pour démarrer le serveur
+      - name: Set up PHP
+        uses: shivammathur/setup-php@44454db4f0199b8b9685a5d763dc37cbf79108e1
+        with:
+          php-version: '8.2'
+          extensions: pdo, pdo_mysql, mysqli
+
       # Démarrer un serveur local pour ZAP
       - name: Start local PHP server
         run: |
@@ -62,6 +69,16 @@ jobs:
         uses: zaproxy/action-baseline@v0.10.0
         with:
           target: 'http://localhost:8080'
+          rules_file_name: '.zap/rules.tsv'
+          cmd_options: '-a'
+
+      # Upload des résultats ZAP
+      - name: Upload ZAP results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: zap-report
+          path: report_md.md
 
   deploy:
     name: Deploy to Server
