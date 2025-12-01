@@ -56,7 +56,6 @@ body {
   border-radius: 12px;
   box-shadow: var(--shadow); /* VARIABLE */
   max-width: 1200px;
-  margin: 0 auto 40px auto;
   border: var(--main-border); /* VARIABLE (Bordure bleue en nuit) */
 
 }
