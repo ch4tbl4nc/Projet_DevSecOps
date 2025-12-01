@@ -1,8 +1,10 @@
 sonar-project.properties
 .env
 
-# ZAP Reports
+# ZAP/ZapProxy Reports
 report_*.md
 report_*.html
 report_*.json
 *.html.md
+/zap-report.*
+/report.*
