@@ -1,0 +1,229 @@
+/* ========== RESET & GLOBAL ========== */
+body, html {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    min-height: 100vh;
+    font-family: 'Orbitron', sans-serif;
+    background-color: black;
+    color: white;
+    overflow-x: hidden;
+}
+
+/* ========== ARRIÈRE-PLAN (CERCLES) ========== */
+.background-animation {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
+}
+
+.cercle1, .cercle3 {
+    position: absolute;
+    width: 50vw;
+    height: 50vw;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgb(31, 72, 161) 0%, rgba(31, 72, 161, 0) 70%);
+    filter: blur(100px);
+    opacity: 0.6;
+}
+.cercle1 { top: -10%; left: -10%; }
+
+.cercle2 {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 300px; height: 300px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgb(31, 72, 161) 0%, rgba(31, 72, 161, 0) 70%);
+    filter: blur(80px);
+    opacity: 0.4;
+}
+.cercle3 { bottom: -10%; right: -10%; }
+
+.orbit { position: absolute; width: 100%; height: 100%; }
+.orbit1 { animation: rotate1 20s linear infinite; }
+.orbit3 { animation: rotate3 25s linear infinite; }
+@keyframes rotate1 { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+@keyframes rotate3 { from { transform: rotate(360deg); } to { transform: rotate(0deg); } }
+
+
+/* ========== LOGO ========== */
+.logo-container {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    z-index: 50;
+}
+
+.titre-barres {
+    color: #ffffff;
+    font-size: clamp(20px, 4vw, 30px); /* Taille dynamique */
+    font-family: fantasy;
+    text-decoration: none;
+    text-shadow: 0 0 10px rgba(31, 72, 161, 0.8);
+}
+
+
+/* ========== SECTION FONDATEURS ========== */
+.founders-section, .founders-grid {
+    background: transparent !important;
+    background-color: transparent !important;
+    box-shadow: none !important;
+    border: none !important;
+}
+
+.founders-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 100px 20px 40px 20px; /* Plus de padding en haut pour éviter le logo */
+    box-sizing: border-box;
+    position: relative;
+    z-index: 10;
+}
+
+.main-title {
+    font-size: clamp(30px, 5vw, 45px); /* Titre responsive */
+    margin-bottom: 50px;
+    text-shadow: 0 0 20px rgb(31, 72, 161);
+    text-align: center;
+    line-height: 1.2;
+}
+
+/* LE CONTENEUR GRILLE (PC par défaut) */
+.founders-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    max-width: 1000px;
+    width: 100%;
+}
+
+/* ========== LES 4 CARTES ========== */
+.founder-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 30px;
+    
+    aspect-ratio: 1 / 1; /* Carré parfait sur PC */
+    
+    background: rgba(10, 10, 10, 0.95);
+    border: 3px solid rgb(31, 72, 161);
+    border-radius: 20px;
+    box-shadow: 
+        inset 0 0 30px rgba(0, 0, 0, 1),
+        0 0 15px rgba(31, 72, 161, 0.5);
+    
+    transition: all 0.4s ease;
+    cursor: default;
+    position: relative;
+    top: 0;
+}
+
+.founder-card:hover {
+    top: -15px; 
+    transform: scale(1.03);
+    background: rgba(20, 20, 30, 0.95);
+    border-color: #ffffff;
+    box-shadow: 
+        inset 0 0 20px rgba(0, 0, 0, 0.8),
+        0 0 20px 5px rgba(255, 255, 255, 0.6),
+        0 20px 30px rgba(0, 0, 0, 0.6),
+        0 0 60px rgba(31, 72, 161, 0.8);
+}
+
+/* TEXTES */
+.founder-card h3 {
+    color: rgb(31, 72, 161);
+    font-size: 1.2rem;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.founder-card h2 {
+    font-size: 2.5rem;
+    margin: 10px 0;
+    color: white;
+    text-shadow: 0 0 10px white;
+}
+
+.founder-card p {
+    text-align: center !important;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 15px;
+    font-size: 0.9rem;
+    color: #cccccc;
+    max-width: 90%;
+    line-height: 1.5;
+}
+
+/* ========================================= */
+/* ============= RESPONSIVE ================ */
+/* ========================================= */
+
+/* 1. TABLETTES et PETITS PC (max 1024px) */
+@media (max-width: 1024px) {
+    .founders-grid {
+        gap: 20px; /* On réduit l'espace entre les cartes */
+        width: 95%; /* On prend plus de largeur */
+    }
+    
+    .founder-card h2 {
+        font-size: 2rem; /* Nom un peu plus petit */
+    }
+}
+
+/* 2. MOBILES (max 768px) */
+@media (max-width: 768px) {
+    .founders-grid {
+        /* On passe tout sur une seule colonne */
+        grid-template-columns: 1fr;
+        gap: 30px;
+    }
+
+    .founder-card {
+        /* IMPORTANT : Sur mobile, on arrête de forcer le carré */
+        /* Sinon les cartes deviennent trop hautes ou le texte dépasse */
+        aspect-ratio: auto; 
+        min-height: 250px; /* Hauteur minimale pour garder le style */
+        padding: 40px 20px;
+    }
+    
+    .main-title {
+        margin-bottom: 30px; /* Moins d'espace sous le titre */
+    }
+}
+
+/* 3. PETITS TÉLÉPHONES (max 480px) */
+@media (max-width: 480px) {
+    .founders-section {
+        padding-top: 80px; /* Remonte un peu le tout */
+    }
+
+    .founder-card {
+        padding: 20px 15px; /* Moins de marge interne */
+    }
+
+    .founder-card h2 {
+        font-size: 1.8rem; /* Nom plus petit */
+    }
+    
+    .founder-card h3 {
+        font-size: 1rem; /* Poste plus petit */
+    }
+    
+    .founder-card p {
+        font-size: 0.85rem;
+    }
+}
