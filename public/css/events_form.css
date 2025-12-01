@@ -51,12 +51,13 @@ body {
 /* ========== HEADER ========== */
 .header {
   text-align: center;
+  margin-bottom: 40px;
   background: var(--bg-card);
   padding: 30px;
   border-radius: 12px;
   box-shadow: var(--shadow);
   max-width: 1200px;
-  margin-bottom: 40px;
+  margin: 0 auto 40px auto;
   border: var(--main-border);
 }
 
@@ -150,6 +151,28 @@ body {
 .form-group textarea {
   resize: vertical;
   min-height: 100px;
+}
+
+.form-group input[type="file"] {
+  padding: 10px;
+  cursor: pointer;
+}
+
+.form-group input[type="file"]::file-selector-button {
+  padding: 8px 16px;
+  background: var(--bttn);
+  color: var(--bttn-text);
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  margin-right: 10px;
+  transition: all 0.3s;
+}
+
+.form-group input[type="file"]::file-selector-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(90, 103, 216, 0.3);
 }
 
 .form-row {
@@ -258,6 +281,25 @@ body {
   z-index: 2;
 }
 
+.event-image {
+  width: 100%;
+  height: 200px;
+  overflow: hidden;
+  border-radius: 8px;
+  margin-bottom: 15px;
+}
+
+.event-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s;
+}
+
+.event-card:hover .event-image img {
+  transform: scale(1.05);
+}
+
 .event-card h3 {
   margin: 0 0 15px 0;
   color: var(--title-color);
@@ -347,6 +389,74 @@ body {
 [data-theme="dark"] input[type="date"],
 [data-theme="dark"] input[type="time"] {
   color-scheme: dark;
+}
+
+/* ========== RADIO BUTTONS ========== */
+input[type="radio"] {
+  width: auto;
+  margin: 0;
+  cursor: pointer;
+  accent-color: var(--bttn);
+}
+
+.form-group input[type="radio"] {
+  width: 20px;
+  height: 20px;
+  padding: 0;
+}
+
+/* Style des labels radio */
+.form-group label[style*="flex"] {
+  padding: 12px 20px;
+  background: var(--input-bg);
+  border: 2px solid var(--border-color);
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.form-group label[style*="flex"]:hover {
+  border-color: var(--bttn);
+  background: rgba(90, 103, 216, 0.05);
+}
+
+[data-theme="dark"] .form-group label[style*="flex"]:hover {
+  background: rgba(51, 134, 255, 0.1);
+}
+
+.form-group label[style*="flex"]:has(input[type="radio"]:checked) {
+  border-color: var(--bttn);
+  background: rgba(90, 103, 216, 0.1);
+  font-weight: 600;
+}
+
+[data-theme="dark"] .form-group label[style*="flex"]:has(input[type="radio"]:checked) {
+  background: rgba(51, 134, 255, 0.15);
+}
+
+/* ========== SECTIONS JOUR UNIQUE / MULTI-JOURS ========== */
+#single-day-section,
+#multi-day-section {
+  margin-top: 20px;
+  margin-bottom: 25px;
+  padding: 20px;
+  background: rgba(90, 103, 216, 0.05);
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  transition: all 0.3s ease;
+}
+
+[data-theme="dark"] #single-day-section,
+[data-theme="dark"] #multi-day-section {
+  background: rgba(51, 134, 255, 0.08);
+}
+
+#multi-day-section .form-row {
+  grid-template-columns: 2fr 1fr;
+}
+
+#single-day-section .form-group,
+#multi-day-section .form-group {
+  margin-bottom: 20px;
 }
 
 /* ========== CERCLES D'AMBIANCE ========== */
