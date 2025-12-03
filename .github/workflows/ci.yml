@@ -14,21 +14,14 @@ jobs:
       mysql:
         image: mysql:8.0
         env:
-          # 1. Configuration Root (Obligatoire pour le démarrage)
-          MYSQL_ROOT_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          # TEST : On met le mot de passe en dur pour être SÛR que le conteneur démarre
+          MYSQL_ROOT_PASSWORD: root
           MYSQL_DATABASE: guardia_app
-          
-          # 2. CRUCIAL : Création de votre utilisateur personnalisé
-          # Cela permet à votre test PHP (qui utilise DB_USERNAME) de se connecter
-          MYSQL_USER: ${{ secrets.DB_USERNAME }}
-          MYSQL_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          
-          # 3. Permet au healthcheck de passer sans taper le mot de passe
-          MYSQL_PWD: ${{ secrets.DB_PASSWORD }}
         ports:
           - 3306:3306
+        # Healthcheck simplifié et robuste pour MySQL 8
         options: >-
-          --health-cmd="mysqladmin ping"
+          --health-cmd="mysqladmin ping -h 127.0.0.1 --password=root"
           --health-interval=10s
           --health-timeout=5s
           --health-retries=5
@@ -47,20 +40,18 @@ jobs:
         run: |
           find . -name "*.php" -print0 | xargs -0 -n1 php -l
 
-      - name: Run Tests (Migration & Unit Tests)
+      - name: Run Tests
         env:
           DB_HOST: 127.0.0.1
           DB_PORT: 3306
           DB_DATABASE: guardia_app
-          # Ici, on utilise les mêmes secrets que ceux injectés dans le service MySQL
-          DB_USERNAME: ${{ secrets.DB_USERNAME }}
-          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_USERNAME: root
+          DB_PASSWORD: root
         run: |
-          # Test de connexion
-          mysql -h $DB_HOST -P $DB_PORT -u $DB_USERNAME -p"$DB_PASSWORD" -e "SHOW DATABASES;"
-          
-          # Vos commandes...
-          # vendor/bin/phpunit
+          # On attend 5 secondes de plus par sécurité
+          sleep 5
+          # Test de connexion simple
+          mysql -h 127.0.0.1 -P 3306 -u root -proot -e "SHOW DATABASES;"
 
   sonarqube:
     name: SonarCloud Scan
