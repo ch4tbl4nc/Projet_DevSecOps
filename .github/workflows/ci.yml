@@ -11,18 +11,20 @@ jobs:
     runs-on: ubuntu-latest
 
     # --- 1. Service MySQL Sécurisé ---
-    services:
+  services:
       mysql:
         image: mysql:8.0
         env:
-          # On utilise un secret GitHub ici
-          MYSQL_ROOT_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          MYSQL_ROOT_PASSWORD: ${{ secrets.TEST_DB_PASSWORD }}
           MYSQL_DATABASE: test_db
+          # CORRECTION ICI : On passe le mot de passe dans cette variable spéciale
+          # mysqladmin l'utilisera automatiquement sans qu'on l'écrive dans la commande
+          MYSQL_PWD: ${{ secrets.TEST_DB_PASSWORD }}
         ports:
           - 3306:3306
-        # Le healthcheck doit aussi utiliser le secret pour pinguer la base
+        # CORRECTION ICI : On retire "--password=..." car MYSQL_PWD est utilisé implicitement
         options: >-
-          --health-cmd="mysqladmin ping --password=${{ secrets.DB_PASSWORD }}"
+          --health-cmd="mysqladmin ping"
           --health-interval=10s
           --health-timeout=5s
           --health-retries=3
