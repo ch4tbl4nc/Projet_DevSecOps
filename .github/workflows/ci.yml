@@ -10,25 +10,28 @@ jobs:
     name: Build & Test
     runs-on: ubuntu-latest
 
-    # --- 1. Service MySQL (La base de données temporaire) ---
     services:
       mysql:
         image: mysql:8.0
         env:
-          # Mot de passe défini via les secrets GitHub
+          # 1. Configuration Root (Obligatoire pour le démarrage)
           MYSQL_ROOT_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          # Nom de votre base de données
           MYSQL_DATABASE: guardia_app
-          # Variable spéciale pour que le healthcheck fonctionne sans erreur de syntaxe
-          MYSQL_PWD: ${{ secrets.DB_PASSWORD}}
+          
+          # 2. CRUCIAL : Création de votre utilisateur personnalisé
+          # Cela permet à votre test PHP (qui utilise DB_USERNAME) de se connecter
+          MYSQL_USER: ${{ secrets.DB_USERNAME }}
+          MYSQL_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          
+          # 3. Permet au healthcheck de passer sans taper le mot de passe
+          MYSQL_PWD: ${{ secrets.DB_PASSWORD }}
         ports:
           - 3306:3306
-        # Healthcheck : Vérifie que MySQL est prêt avant de lancer la suite
         options: >-
           --health-cmd="mysqladmin ping"
           --health-interval=10s
           --health-timeout=5s
-          --health-retries=3
+          --health-retries=5
 
     steps:
       - name: Checkout repository
@@ -44,34 +47,30 @@ jobs:
         run: |
           find . -name "*.php" -print0 | xargs -0 -n1 php -l
 
-      # --- 2. Exécution des Tests ---
       - name: Run Tests (Migration & Unit Tests)
         env:
-          # Configuration pour que PHP trouve la base de données ci-dessus
           DB_HOST: 127.0.0.1
           DB_PORT: 3306
           DB_DATABASE: guardia_app
-          DB_USERNAME: ${{ secrets.DB_USERNAME}}
+          # Ici, on utilise les mêmes secrets que ceux injectés dans le service MySQL
+          DB_USERNAME: ${{ secrets.DB_USERNAME }}
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
         run: |
-          # A. Test de connexion (Debug)
+          # Test de connexion
           mysql -h $DB_HOST -P $DB_PORT -u $DB_USERNAME -p"$DB_PASSWORD" -e "SHOW DATABASES;"
           
-          # B. Vos vraies commandes (décommentez selon votre projet) :
-          # php bin/console doctrine:migrations:migrate --no-interaction
+          # Vos commandes...
           # vendor/bin/phpunit
 
   sonarqube:
     name: SonarCloud Scan
     runs-on: ubuntu-latest
     needs: build-and-test
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@e44258b109568baa0df60ed515909fc6c72cba92
         with:
@@ -86,10 +85,8 @@ jobs:
     name: Deploy to Server
     runs-on: ubuntu-latest
     needs: build-and-test
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-      
       - name: Deploy Script
         run: echo "Deployment logic here"
