@@ -1,61 +1,31 @@
-<?
-php
-require_once __DIR__ . '/security-headers.php';
+<?php
+session_start();
 require_once __DIR__ . '/../privée/database.php';
 use Privee\Database;
 
-session_start();
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Vérification CSRF
-    if (!isset($_POST['csrf_token']) || !verifyCsrfToken($_POST['csrf_token'])) {
-        header('Location: views/login.html?error=csrf');
-        exit;
-    }
+    $username = trim($_POST['username']);
+    $password = $_POST['password'];
 
-    // Validation et nettoyage des entrées
-    $username = isset($_POST['username']) ? sanitizeInput($_POST['username']) : '';
-    $password = isset($_POST['password']) ? $_POST['password'] : '';
+    $pdo = Database::getPdo();
 
-    if (empty($username) || empty($password)) {
-        header('Location: views/login.html?error=empty');
-        exit;
-    }
+    // Récupérer l'utilisateur
+    $stmt = $pdo->prepare('SELECT id, username, is_admin, password FROM users WHERE username = ?');
+    $stmt->execute([$username]);
+    $user = $stmt->fetch();
 
-    // Limite de longueur pour éviter les attaques
-    if (strlen($username) > 50 || strlen($password) > 255) {
-        header('Location: views/login.html?error=invalid');
-        exit;
-    }
-
-    try {
-        $pdo = Database::getPdo();
-
-        // Récupérer l'utilisateur avec requête préparée
-        $stmt = $pdo->prepare('SELECT id, password FROM users WHERE username = ?');
-        $stmt->execute([$username]);
-        $user = $stmt->fetch();
-
-        if ($user && password_verify($password, $user['password'])) {
-            // Régénérer l'ID de session pour éviter la fixation de session
-            session_regenerate_id(true);
-            $_SESSION['user_id'] = $user['id'];
-            $_SESSION['username'] = $username;
-            
-            header('Location: events.php');
-            exit;
-        }
+    if ($user && password_verify($password, $user['password'])) {
+        // Créer la session
+        $_SESSION['user_id'] = $user['id'];
+        $_SESSION['username'] = $user['username'];
+        $_SESSION['is_admin'] = $user['is_admin'];
         
-        // Message d'erreur générique pour ne pas révéler si l'utilisateur existe
-        header('Location: views/login.html?error=invalid');
-        exit;
-    } catch (Exception $e) {
-        error_log("Login error: " . $e->getMessage());
-        header('Location: views/login.html?error=server');
+        // Connexion réussie
+        header('Location: events.php');
         exit;
     }
+    
+    // Sinon, retour à la page de login avec erreur
+    header('Location: views/login.html?error=1');
+    exit;
 }
-
-// Redirection si accès GET
-header('Location: views/login.html');
-exit;

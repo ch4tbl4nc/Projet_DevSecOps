@@ -1,125 +1,81 @@
-<?
-php
-require_once __DIR__ . '/security-headers.php';
+<?php
+session_start();
 require_once __DIR__ . '/../privée/database.php';
 use Privee\Database;
+$pdo = Database::getPdo();
 
-session_start();
-
-// Vérifier l'authentification
-if (!isset($_SESSION['user_id'])) {
-    header('Location: views/login.html');
+// Vérifier si l'utilisateur est admin
+if (!isset($_SESSION['is_admin']) || $_SESSION['is_admin'] != 1) {
+    header('Location: events.php');
     exit;
 }
 
-$pdo = Database::getPdo();
-$error = null;
-$success = false;
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+  $name = $_POST['name'];
+  $theme = $_POST['theme'];
+  $description = $_POST['description'];
+  $address = $_POST['address'];
+  $city = $_POST['city'];
+  $postal_code = $_POST['postal_code'];
+  $country = $_POST['country'];
+  $duration_type = $_POST['duration_type'];
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Vérification CSRF
-    if (!isset($_POST['csrf_token']) || !verifyCsrfToken($_POST['csrf_token'])) {
-        $error = 'Erreur de sécurité. Veuillez réessayer.';
-    } else {
-        // Validation et nettoyage des entrées
-        $name = sanitizeInput($_POST['name'] ?? '');
-        $theme = sanitizeInput($_POST['theme'] ?? '');
-        $description = sanitizeInput($_POST['description'] ?? '');
-        $address = sanitizeInput($_POST['address'] ?? '');
-        $city = sanitizeInput($_POST['city'] ?? '');
-        $postalCode = sanitizeInput($_POST['postal_code'] ?? '');
-        $country = sanitizeInput($_POST['country'] ?? 'France');
-        $durationType = $_POST['duration_type'] ?? 'single';
+  if ($duration_type === 'single') {
+    $date = $_POST['date'];
+    $start_time = $_POST['heure_debut'];
+    $end_time = $_POST['heure_fin'];
+    $end_date = null;
+  } else {
+    $date = $_POST['date_debut_multi'];
+    $start_time = $_POST['heure_debut_multi'];
+    $end_time = $_POST['heure_fin_multi'];
+    $end_date = $_POST['date_fin_multi'];
+  }
 
-        // Validation des champs obligatoires
-        if (empty($name) || empty($address) || empty($city) || empty($postalCode)) {
-            $error = 'Veuillez remplir tous les champs obligatoires.';
-        } else {
-            if ($durationType === 'single') {
-                $date = $_POST['date'] ?? '';
-                $startTime = $_POST['heure_debut'] ?? '';
-                $endTime = $_POST['heure_fin'] ?? '';
-                $endDate = null;
-            } else {
-                $date = $_POST['date_debut_multi'] ?? '';
-                $startTime = $_POST['heure_debut_multi'] ?? '';
-                $endTime = $_POST['heure_fin_multi'] ?? '';
-                $endDate = $_POST['date_fin_multi'] ?? null;
-            }
-
-            // Validation des dates et heures
-            if (!validateDate($date) || !validateTime($startTime) || !validateTime($endTime)) {
-                $error = 'Date ou heure invalide.';
-            } elseif ($endDate !== null && !validateDate($endDate)) {
-                $error = 'Date de fin invalide.';
-            } else {
-                // Gestion de l'upload d'image sécurisé
-                $imagePath = null;
-                if (isset($_FILES['event_image']) && $_FILES['event_image']['error'] === UPLOAD_ERR_OK) {
-                    $uploadDir = __DIR__ . '/uploads/events/';
-                    if (!is_dir($uploadDir)) {
-                        mkdir($uploadDir, 0755, true);
-                    }
-                    
-                    $fileExtension = strtolower(pathinfo($_FILES['event_image']['name'], PATHINFO_EXTENSION));
-                    $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
-                    $maxFileSize = 5 * 1024 * 1024; // 5MB
-                    
-                    // Vérification du type MIME réel
-                    $finfo = new finfo(FILEINFO_MIME_TYPE);
-                    $mimeType = $finfo->file($_FILES['event_image']['tmp_name']);
-                    $allowedMimes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
-                    
-                    if (!in_array($fileExtension, $allowedExtensions)) {
-                        $error = 'Extension de fichier non autorisée.';
-                    } elseif (!in_array($mimeType, $allowedMimes)) {
-                        $error = 'Type de fichier non autorisé.';
-                    } elseif ($_FILES['event_image']['size'] > $maxFileSize) {
-                        $error = 'Fichier trop volumineux (max 5MB).';
-                    } else {
-                        $uniqueName = bin2hex(random_bytes(16)) . '.' . $fileExtension;
-                        $destination = $uploadDir . $uniqueName;
-                        
-                        if (move_uploaded_file($_FILES['event_image']['tmp_name'], $destination)) {
-                            $imagePath = 'uploads/events/' . $uniqueName;
-                        }
-                    }
-                }
-
-                if ($error === null) {
-                    try {
-                        $stmt = $pdo->prepare("INSERT INTO events (name, theme, description, date, start_time, end_time, end_date, address, city, postal_code, country, image_path) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-                        $stmt->execute([$name, $theme, $description, $date, $startTime, $endTime, $endDate, $address, $city, $postalCode, $country, $imagePath]);
-
-                        header('Location: events.php?success=1');
-                        exit;
-                    } catch (Exception $e) {
-                        error_log("Event creation error: " . $e->getMessage());
-                        $error = 'Erreur lors de la création de l\'événement.';
-                    }
-                }
-            }
-        }
+  // Gestion de l'upload d'image
+  $image_path = null;
+  if (isset($_FILES['event_image']) && $_FILES['event_image']['error'] === UPLOAD_ERR_OK) {
+    $upload_dir = __DIR__ . '/uploads/events/';
+    if (!is_dir($upload_dir)) {
+      mkdir($upload_dir, 0777, true);
     }
-}
+    
+    $file_extension = strtolower(pathinfo($_FILES['event_image']['name'], PATHINFO_EXTENSION));
+    $allowed_extensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+    
+    if (in_array($file_extension, $allowed_extensions)) {
+      $unique_name = uniqid('event_', true) . '.' . $file_extension;
+      $destination = $upload_dir . $unique_name;
+      
+      if (move_uploaded_file($_FILES['event_image']['tmp_name'], $destination)) {
+        $image_path = 'uploads/events/' . $unique_name;
+      }
+    }
+  }
 
-$csrfToken = generateCsrfToken();
+  $stmt = $pdo->prepare("INSERT INTO events (name, theme, description, date, start_time, end_time, end_date, address, city, postal_code, country, image_path) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+  $stmt->execute([$name, $theme, $description, $date, $start_time, $end_time, $end_date, $address, $city, $postal_code, $country, $image_path]);
+
+  header('Location: events.php');
+  exit;
+}
 
 $stmt = $pdo->query("SELECT * FROM events ORDER BY date DESC, start_time DESC");
 $events = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 <!DOCTYPE html>
-<html lang="fr">
+<html>
   <head>
     <title>Créer un Événement - GUARDIA</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <link rel="stylesheet" href="css/events_form.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   </head>
   <body>
     <!-- Bouton Mode Sombre -->
     <button id="theme-btn" style="position:fixed; top:20px; right:20px; z-index:1000; padding:10px 15px; border-radius:30px; border:none; background:white; cursor:pointer; font-weight:bold; box-shadow:0 4px 10px rgba(0,0,0,0.2);">
-      🌙 Mode Nuit
+      <i class="fas fa-moon"></i> Mode Nuit
     </button>
 
     <!-- Cercles d'ambiance animés -->
@@ -135,24 +91,16 @@ $events = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     <div class="container">
       <div class="header">
-        <h1>📅 Créer un Événement</h1>
+        <h1><i class="fas fa-calendar-plus"></i> Créer un Événement</h1>
         <p>Remplissez le formulaire pour ajouter un nouvel événement GUARDIA</p>
       </div>
 
       <div class="form-container">
         <div id="success-message" class="success-message">
-          ✓ Événement créé avec succès !
+          <i class="fas fa-check"></i> Événement créé avec succès !
         </div>
 
         <form id="event-form" method="POST" action="form.php" enctype="multipart/form-data">
-          <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken) ?>">
-          
-          <?php if ($error): ?>
-          <div class="error-message" style="background: #ffebee; color: #c62828; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
-            ⚠️ <?= htmlspecialchars($error) ?>
-          </div>
-          <?php endif; ?>
-          
           <!-- Informations générales -->
           <div class="form-group">
             <label for="name">Nom de l'événement <span class="required">*</span></label>
@@ -178,8 +126,8 @@ $events = $stmt->fetchAll(PDO::FETCH_ASSOC);
           </div>
 
           <!-- Durée de l'événement -->
-          <fieldset class="form-group" style="border: none; padding: 0; margin: 0;">
-            <legend>Durée de l'événement <span class="required">*</span></legend>
+          <div class="form-group">
+            <label>Durée de l'événement <span class="required">*</span></label>
             <div style="display: flex; gap: 20px; margin-top: 10px;">
               <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
                 <input type="radio" name="duration_type" value="single" checked onchange="toggleDurationType()">
@@ -190,7 +138,7 @@ $events = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <span>Plusieurs jours</span>
               </label>
             </div>
-          </fieldset>
+          </div>
 
           <!-- Date et heures pour une journée -->
           <div id="single-day-section">
@@ -258,14 +206,14 @@ $events = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
           <!-- Aperçu de la carte -->
           <div class="map-preview">
-            <iframe id="map-iframe" src="" title="map"></iframe>
+            <iframe id="map-iframe" src=""></iframe>
           </div>
 
           <button type="submit" class="btn-submit">Créer l'événement</button>
         </form>
 
         <div style="text-align: center; margin-top: 30px;">
-            <a href="events.php">📋 Voir tous les événements</a>
+            <a href="events.php"><i class="fas fa-list"></i> Voir tous les événements</a>
         </div>
       </div>
     </div>
@@ -388,7 +336,7 @@ $events = $stmt->fetchAll(PDO::FETCH_ASSOC);
       // Charger le thème sauvegardé
       if(localStorage.getItem('theme') === 'dark') {
         html.setAttribute('data-theme', 'dark');
-        themeBtn.textContent = '☀️ Mode Jour';
+        themeBtn.innerHTML = '<i class="fas fa-sun"></i> Mode Jour';
         themeBtn.style.background = '#1967d2';
         themeBtn.style.color = 'white';
       }
@@ -397,13 +345,13 @@ $events = $stmt->fetchAll(PDO::FETCH_ASSOC);
         if (html.getAttribute('data-theme') === 'dark') {
           html.removeAttribute('data-theme');
           localStorage.setItem('theme', 'light');
-          themeBtn.textContent = '🌙 Mode Nuit';
+          themeBtn.innerHTML = '<i class="fas fa-moon"></i> Mode Nuit';
           themeBtn.style.background = 'white';
           themeBtn.style.color = 'black';
         } else {
           html.setAttribute('data-theme', 'dark');
           localStorage.setItem('theme', 'dark');
-          themeBtn.textContent = '☀️ Mode Jour';
+          themeBtn.innerHTML = '<i class="fas fa-sun"></i> Mode Jour';
           themeBtn.style.background = '#1967d2';
           themeBtn.style.color = 'white';
         }
