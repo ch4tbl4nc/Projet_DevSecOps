@@ -10,21 +10,53 @@ jobs:
     name: Build & Test
     runs-on: ubuntu-latest
 
+    # --- 1. Service MySQL Sécurisé ---
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          # On utilise un secret GitHub ici
+          MYSQL_ROOT_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          MYSQL_DATABASE: test_db
+        ports:
+          - 3306:3306
+        # Le healthcheck doit aussi utiliser le secret pour pinguer la base
+        options: >-
+          --health-cmd="mysqladmin ping --password=${{ secrets.DB_PASSWORD }}"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Installation de PHP + extensions
       - name: Set up PHP
         uses: shivammathur/setup-php@44454db4f0199b8b9685a5d763dc37cbf79108e1
         with:
           php-version: '8.2'
           extensions: pdo, pdo_mysql, mysqli
 
-      # Vérification syntaxe PHP
       - name: PHP Syntax Check
         run: |
           find . -name "*.php" -print0 | xargs -0 -n1 php -l
+
+      # --- 2. Tests avec Injection des Secrets ---
+      - name: Run Tests (Migration & Unit Tests)
+        # On injecte le secret uniquement dans l'environnement de cette étape
+        env:
+          DB_HOST: 127.0.0.1
+          DB_PORT: 3306
+          DB_DATABASE: guardia_app
+          DB_USERNAME: ${{ secrets.DB_USERNAME }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+        run: |
+          # Exemple de commande de test (à adapter à votre projet) :
+          # vendor/bin/phpunit
+          
+          # Vérification de connexion (pour l'exemple)
+          # Notez l'utilisation de "$DB_PASSWORD" qui vient des variables d'env ci-dessus
+          mysql -h $DB_HOST -P $DB_PORT -u $DB_USERNAME -p"$DB_PASSWORD" -e "SHOW DATABASES;"
 
   sonarqube:
     name: SonarCloud Scan
@@ -55,3 +87,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+      
+      - name: Deploy Script
+        run: echo "Deployment logic here"
