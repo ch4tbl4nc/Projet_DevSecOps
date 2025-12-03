@@ -24,9 +24,9 @@
         <div class="login-container">
             <h2>Connexion</h2>
 
-            <form action="#">
-                <input type="text" placeholder="Nom d'utilisateur" class="login-input" required>
-                <input type="password" placeholder="Mot de passe" class="login-input" required>
+            <form action="../login.php" method="POST">
+                <input type="text" name="username" placeholder="Nom d'utilisateur" class="login-input" required>
+                <input type="password" name="password" placeholder="Mot de passe" class="login-input" required>
 
                 <button type="submit" class="login-btn">Se connecter</button>
             </form>
@@ -39,7 +39,5 @@
             <div class="signup-underline"></div>
         </div>
     </main>
-
-    <script type="module" src="https://unpkg.com/@splinetool/viewer@1.9.28/build/spline-viewer.js"></script>
 </body>
 </html>
