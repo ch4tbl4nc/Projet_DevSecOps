@@ -10,19 +10,20 @@ jobs:
     name: Build & Test
     runs-on: ubuntu-latest
 
-    # --- 1. Service MySQL Sécurisé ---
-  services:
+    # --- 1. Service MySQL (La base de données temporaire) ---
+    services:
       mysql:
         image: mysql:8.0
         env:
-          MYSQL_ROOT_PASSWORD: ${{ secrets.TEST_DB_PASSWORD }}
-          MYSQL_DATABASE: test_db
-          # CORRECTION ICI : On passe le mot de passe dans cette variable spéciale
-          # mysqladmin l'utilisera automatiquement sans qu'on l'écrive dans la commande
-          MYSQL_PWD: ${{ secrets.TEST_DB_PASSWORD }}
+          # Mot de passe défini via les secrets GitHub
+          MYSQL_ROOT_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          # Nom de votre base de données
+          MYSQL_DATABASE: guardia_app
+          # Variable spéciale pour que le healthcheck fonctionne sans erreur de syntaxe
+          MYSQL_PWD: ${{ secrets.DB_PASSWORD}}
         ports:
           - 3306:3306
-        # CORRECTION ICI : On retire "--password=..." car MYSQL_PWD est utilisé implicitement
+        # Healthcheck : Vérifie que MySQL est prêt avant de lancer la suite
         options: >-
           --health-cmd="mysqladmin ping"
           --health-interval=10s
@@ -43,22 +44,22 @@ jobs:
         run: |
           find . -name "*.php" -print0 | xargs -0 -n1 php -l
 
-      # --- 2. Tests avec Injection des Secrets ---
+      # --- 2. Exécution des Tests ---
       - name: Run Tests (Migration & Unit Tests)
-        # On injecte le secret uniquement dans l'environnement de cette étape
         env:
+          # Configuration pour que PHP trouve la base de données ci-dessus
           DB_HOST: 127.0.0.1
           DB_PORT: 3306
           DB_DATABASE: guardia_app
-          DB_USERNAME: ${{ secrets.DB_USERNAME }}
+          DB_USERNAME: ${{ secrets.DB_USERNAME}}
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
         run: |
-          # Exemple de commande de test (à adapter à votre projet) :
-          # vendor/bin/phpunit
-          
-          # Vérification de connexion (pour l'exemple)
-          # Notez l'utilisation de "$DB_PASSWORD" qui vient des variables d'env ci-dessus
+          # A. Test de connexion (Debug)
           mysql -h $DB_HOST -P $DB_PORT -u $DB_USERNAME -p"$DB_PASSWORD" -e "SHOW DATABASES;"
+          
+          # B. Vos vraies commandes (décommentez selon votre projet) :
+          # php bin/console doctrine:migrations:migrate --no-interaction
+          # vendor/bin/phpunit
 
   sonarqube:
     name: SonarCloud Scan
