@@ -56,7 +56,7 @@ function validateDate(string $date): bool {
  * Fonction pour valider une heure
  */
 function validateTime(string $time): bool {
-    return preg_match('/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/', $time) === 1;
+    return preg_match('/^([01]?\d|2[0-3]):[0-5]\d$/', $time) === 1;
 }
 
 /**

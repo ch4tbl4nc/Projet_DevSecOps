@@ -6,7 +6,7 @@ use Privee\WeatherService;
 
 $city = $_GET['city'] ?? '';
 $date = $_GET['date'] ?? '';
-$country = $_GET['country'] ?? 'FR';
+$country = $_GET['country'] ?? 'FR';   
 
 if (empty($city) || empty($date)) {
     echo json_encode(['error' => 'Paramètres manquants (ville ou date)']);

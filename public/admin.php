@@ -96,17 +96,17 @@ $events = $pdo->query('SELECT id, name, date, city, theme, created_at FROM event
 
 // Statistiques par mois (6 derniers mois)
 $monthlyStats = $pdo->query("
-    SELECT 
+    SELECT
         DATE_FORMAT(created_at, '%Y-%m') as month,
         COUNT(*) as count
-    FROM events 
+    FROM events
     WHERE created_at >= DATE_SUB(NOW(), INTERVAL 6 MONTH)
     GROUP BY DATE_FORMAT(created_at, '%Y-%m')
     ORDER BY month ASC
 ")->fetchAll(PDO::FETCH_ASSOC);
 ?>
 <!DOCTYPE html>
-<html>
+<html lang="fr">
   <head>
     <title>Administration - MonAgendaPro</title>
     <meta charset="utf-8">
@@ -271,7 +271,7 @@ $monthlyStats = $pdo->query("
               </thead>
               <tbody>
                 <?php foreach($events as $event): ?>
-                  <?php 
+                  <?php
                     $isPast = strtotime($event['date']) < strtotime('today');
                   ?>
                   <tr class="<?= $isPast ? 'past-event' : 'upcoming-event' ?>">

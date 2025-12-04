@@ -57,7 +57,6 @@ body {
   border-radius: 12px;
   box-shadow: var(--shadow);
   max-width: 1200px;
-  margin: 0 auto 40px auto;
   border: var(--main-border);
 }
 
@@ -268,6 +267,13 @@ body {
   border-top: none;
   border-right: none;
   border-bottom: none;
+  /* Reset button styles for accessibility */
+  width: 100%;
+  text-align: left;
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+  display: block;
 }
 
 .event-card:hover {
@@ -383,13 +389,14 @@ body {
 
 .weather-header {
   background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-  color: white;
+  color: #ffffff;
   padding: 14px 18px;
   font-weight: bold;
   display: flex;
   align-items: center;
   gap: 10px;
   font-size: 15px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .weather-header i {
@@ -402,9 +409,9 @@ body {
 
 /* Notice pour prévision partielle */
 .weather-notice {
-  background: linear-gradient(135deg, rgba(251, 191, 36, 0.15), rgba(245, 158, 11, 0.1));
-  border: 1px solid rgba(251, 191, 36, 0.4);
-  color: #b45309;
+  background: linear-gradient(135deg, rgba(251, 191, 36, 0.2), rgba(245, 158, 11, 0.15));
+  border: 1px solid rgba(180, 83, 9, 0.5);
+  color: #78350f;
   padding: 10px 14px;
   border-radius: 8px;
   font-size: 12px;
@@ -416,13 +423,13 @@ body {
 
 .weather-notice i {
   font-size: 14px;
-  color: #f59e0b;
+  color: #b45309;
 }
 
 [data-theme="dark"] .weather-notice {
-  background: linear-gradient(135deg, rgba(251, 191, 36, 0.12), rgba(245, 158, 11, 0.08));
-  border-color: rgba(251, 191, 36, 0.3);
-  color: #fbbf24;
+  background: linear-gradient(135deg, rgba(251, 191, 36, 0.15), rgba(245, 158, 11, 0.12));
+  border-color: rgba(251, 191, 36, 0.4);
+  color: #fef3c7;
 }
 
 .weather-placeholder,
@@ -497,35 +504,35 @@ body {
 
 .weather-icon.weather-clear {
   background: linear-gradient(135deg, #fbbf24, #f59e0b);
-  color: white;
+  color: #1f2937;
 }
 
 .weather-icon.weather-clouds {
   background: linear-gradient(135deg, #94a3b8, #64748b);
-  color: white;
+  color: #1e293b;
 }
 
 .weather-icon.weather-rain,
 .weather-icon.weather-drizzle {
   background: linear-gradient(135deg, #60a5fa, #3b82f6);
-  color: white;
+  color: #1e3a5f;
 }
 
 .weather-icon.weather-thunderstorm {
   background: linear-gradient(135deg, #a78bfa, #7c3aed);
-  color: white;
+  color: #1e1b4b;
 }
 
 .weather-icon.weather-snow {
   background: linear-gradient(135deg, #e0f2fe, #bae6fd);
-  color: #0284c7;
+  color: #0c4a6e;
 }
 
 .weather-icon.weather-mist,
 .weather-icon.weather-fog,
 .weather-icon.weather-haze {
   background: linear-gradient(135deg, #cbd5e1, #94a3b8);
-  color: white;
+  color: #1e293b;
 }
 
 .weather-temp {
@@ -580,7 +587,7 @@ body {
 /* Badge événement multi-jours */
 .weather-multiday-badge {
   background: linear-gradient(135deg, #8b5cf6, #7c3aed);
-  color: white;
+  color: #f5f3ff;
   padding: 4px 10px;
   border-radius: 20px;
   font-size: 11px;
@@ -588,6 +595,7 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 5px;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.2);
 }
 
 .weather-multiday-badge i {

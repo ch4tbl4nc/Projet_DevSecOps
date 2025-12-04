@@ -20,34 +20,36 @@ if (!verifyCsrfToken($csrf_token)) {
 try {
     $pdo = Database::getPdo();
     
+    // Sanitization des entrées
     $username = sanitizeInput($_POST['username'] ?? '');
     $password = $_POST['password'] ?? '';
     
     if (empty($username) || empty($password)) {
-        header('Location: views/login.php?error=1');
+        header('Location: views/login.php?error=empty');
         exit;
     }
     
     $stmt = $pdo->prepare("SELECT * FROM users WHERE username = ?");
     $stmt->execute([$username]);
-    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+    $user = $stmt->fetch();
     
     if ($user && password_verify($password, $user['password'])) {
-        // Régénérer l'ID de session pour éviter la fixation de session
+        // Régénérer l'ID de session
         session_regenerate_id(true);
         
         $_SESSION['user_id'] = $user['id'];
         $_SESSION['username'] = $user['username'];
         $_SESSION['is_admin'] = $user['is_admin'];
+        
         header('Location: events.php');
-        exit;
-    } else {
-        header('Location: views/login.php?error=1');
         exit;
     }
     
+    header('Location: views/login.php?error=invalid');
+    exit;
+    
 } catch (Exception $e) {
     error_log('Login error: ' . $e->getMessage());
-    header('Location: views/login.php?error=1');
+    header('Location: views/login.php?error=server');
     exit;
 }

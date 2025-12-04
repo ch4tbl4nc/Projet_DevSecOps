@@ -100,7 +100,7 @@ $stmt = $pdo->query("SELECT * FROM events ORDER BY date DESC, start_time DESC");
 $events = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 <!DOCTYPE html>
-<html>
+<html lang="fr">
   <head>
     <title>Créer un Événement - MonAgendaPro</title>
     <meta charset="utf-8">
@@ -165,9 +165,9 @@ $events = $stmt->fetchAll(PDO::FETCH_ASSOC);
           </div>
 
           <!-- Durée de l'événement -->
-          <div class="form-group">
-            <label>Durée de l'événement <span class="required">*</span></label>
-            <div style="display: flex; gap: 20px; margin-top: 10px;">
+          <fieldset class="form-group" style="border: none; padding: 0; margin: 0;">
+            <legend style="font-weight: 500; margin-bottom: 10px;">Durée de l'événement <span class="required">*</span></legend>
+            <div style="display: flex; gap: 20px;">
               <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
                 <input type="radio" name="duration_type" value="single" checked onchange="toggleDurationType()">
                 <span>Une journée</span>
@@ -177,7 +177,7 @@ $events = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <span>Plusieurs jours</span>
               </label>
             </div>
-          </div>
+          </fieldset>
 
           <!-- Date et heures pour une journée -->
           <div id="single-day-section">
@@ -245,7 +245,7 @@ $events = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
           <!-- Aperçu de la carte -->
           <div class="map-preview">
-            <iframe id="map-iframe" src=""></iframe>
+            <iframe id="map-iframe" src="" title="Aperçu de la carte de l'événement"></iframe>
           </div>
 
           <button type="submit" class="btn-submit">Créer l'événement</button>
