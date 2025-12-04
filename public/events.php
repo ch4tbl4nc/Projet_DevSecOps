@@ -1,5 +1,12 @@
 <?php
 session_start();
+
+// Vérifier si l'utilisateur est connecté
+if (!isset($_SESSION['user_id'])) {
+    header('Location: views/login.html');
+    exit;
+}
+
 require_once __DIR__ . '/../privée/database.php';
 require_once __DIR__ . '/../privée/WeatherService.php';
 use Privee\Database;
@@ -11,7 +18,7 @@ $events = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 // Vérifier si l'utilisateur est admin
 $isAdmin = isset($_SESSION['is_admin']) && $_SESSION['is_admin'] == 1;
-$isLoggedIn = isset($_SESSION['user_id']);
+$isLoggedIn = true; // Forcément connecté si on arrive ici
 ?>
 <!DOCTYPE html>
 <html>
@@ -49,11 +56,7 @@ $isLoggedIn = isset($_SESSION['user_id']);
         <a href="form.php" class="btn-nav"><i class="fas fa-plus"></i> Créer un événement</a>
         <a href="admin.php" class="btn-nav"><i class="fas fa-shield-halved"></i> Administration</a>
       <?php endif; ?>
-      <?php if($isLoggedIn): ?>
-        <a href="logout.php" class="btn-nav" style="background: #e53e3e;"><i class="fas fa-right-from-bracket"></i> Déconnexion</a>
-      <?php else: ?>
-        <a href="views/login.html" class="btn-nav"><i class="fas fa-lock"></i> Connexion</a>
-      <?php endif; ?>
+      <a href="logout.php" class="btn-nav" style="background: #e53e3e;"><i class="fas fa-right-from-bracket"></i> Déconnexion</a>
     </div>
 
     <div class="main-content">
