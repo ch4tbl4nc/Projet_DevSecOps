@@ -15,10 +15,14 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 try {
     $pdo = Database::getPdo();
     
-    $username = trim($_POST['username'] ?? '');
-    $email = trim($_POST['email'] ?? '');
-    $password = $_POST['password'] ?? '';
-    $confirm_password = $_POST['confirm_password'] ?? '';
+    // Accepter différents noms de champs possibles
+    $username = trim($_POST['username'] ?? $_POST['name'] ?? $_POST['user'] ?? '');
+    $email = trim($_POST['email'] ?? $_POST['mail'] ?? '');
+    $password = $_POST['password'] ?? $_POST['pwd'] ?? $_POST['pass'] ?? '';
+    $confirm_password = $_POST['confirm_password'] ?? $_POST['password_confirm'] ?? $_POST['confirm'] ?? $_POST['password2'] ?? $password;
+    
+    // Debug - décommenter pour voir les données reçues
+    // echo "<pre>Données reçues: "; print_r($_POST); echo "</pre>"; exit;
     
     // Vérifications
     if (empty($username) || empty($email) || empty($password)) {

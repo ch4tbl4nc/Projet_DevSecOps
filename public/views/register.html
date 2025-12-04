@@ -3,43 +3,162 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MonAgendaPro / S'inscrire</title>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="../css/register.css">
+    <title>Inscription - GUARDIA</title>
+    <link rel="stylesheet" href="../css/events_form.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        .auth-container {
+            max-width: 450px;
+            margin: 80px auto;
+            padding: 40px;
+            background: var(--bg-card);
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            border: var(--main-border);
+        }
+        .auth-container h1 {
+            text-align: center;
+            color: var(--title-color);
+            margin-bottom: 10px;
+        }
+        .auth-container h1 i {
+            margin-right: 10px;
+        }
+        .auth-subtitle {
+            text-align: center;
+            color: var(--text-sec);
+            margin-bottom: 30px;
+        }
+        .auth-footer {
+            text-align: center;
+            margin-top: 25px;
+            color: var(--text-sec);
+        }
+        .auth-footer a {
+            color: var(--bttn);
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .auth-footer a:hover {
+            text-decoration: underline;
+        }
+        .error-message {
+            background: #fee2e2;
+            border: 1px solid #fca5a5;
+            color: #dc2626;
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+        [data-theme="dark"] .error-message {
+            background: rgba(220, 38, 38, 0.15);
+            border-color: rgba(220, 38, 38, 0.3);
+        }
+    </style>
 </head>
-
 <body>
+    <!-- Bouton Mode Sombre -->
+    <button id="theme-btn" style="position:fixed; top:20px; right:20px; z-index:1000; padding:10px 15px; border-radius:30px; border:none; background:white; cursor:pointer; font-weight:bold; box-shadow:0 4px 10px rgba(0,0,0,0.2);">
+        <i class="fas fa-moon"></i> Mode Nuit
+    </button>
 
-    <div class="background-animation">
-        <div class="orbit orbit1"><div class="cercle1"></div></div>
-        <div class="cercle2"></div>
-        <div class="orbit orbit3"><div class="cercle3"></div></div>
-    </div>
+    <!-- Cercles d'ambiance -->
+    <div class="orbit orbit1"><div class="cercle1"></div></div>
+    <div class="orbit"><div class="cercle2"></div></div>
+    <div class="orbit orbit3"><div class="cercle3"></div></div>
 
-    <div class="logo-container">
-        <a href="../../index.html" class="titre-barres">MonAgendaPro</a>
-    </div>
+    <div class="auth-container">
+        <h1><i class="fas fa-user-plus"></i> Inscription</h1>
+        <p class="auth-subtitle">Créez votre compte GUARDIA</p>
 
-    <main class="main-wrapper">
-        <div class="login-container">
-            <h2>Créer un compte</h2>
-
-            <form action="../register.php" method="POST"> <input type="text" class="login-input" placeholder="Nom d'utilisateur" required>
-                <input type="email" class="login-input" placeholder="Adresse email" required>
-                <input type="password" class="login-input" placeholder="Mot de passe" required>
-                <input type="password" class="login-input" placeholder="Confirmer le mot de passe" required>
-
-                <button type="submit" class="login-btn">S'inscrire</button>
-            </form>
-
-            <p class="signup-text">
-                Vous avez déjà un compte ? <br>
-                <a href="login.html" class="signup-link">Connectez-vous</a>
-            </p>
-            
-            <div class="signup-underline"></div>
+        <!-- Message d'erreur -->
+        <div class="error-message" id="error-msg" style="display: none;">
+            <i class="fas fa-exclamation-circle"></i>
+            <span id="error-text">Une erreur est survenue</span>
         </div>
-    </main>
+
+        <form action="../register.php" method="POST">
+            <div class="form-group">
+                <label for="username">Nom d'utilisateur <span class="required">*</span></label>
+                <input type="text" id="username" name="username" required placeholder="Votre pseudo">
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email <span class="required">*</span></label>
+                <input type="email" id="email" name="email" required placeholder="votre@email.com">
+            </div>
+
+            <div class="form-group">
+                <label for="password">Mot de passe <span class="required">*</span></label>
+                <input type="password" id="password" name="password" required placeholder="Votre mot de passe" minlength="6">
+            </div>
+
+            <div class="form-group">
+                <label for="confirm_password">Confirmer le mot de passe <span class="required">*</span></label>
+                <input type="password" id="confirm_password" name="confirm_password" required placeholder="Confirmez le mot de passe">
+            </div>
+
+            <button type="submit" class="btn-submit">
+                <i class="fas fa-user-plus"></i> Créer mon compte
+            </button>
+        </form>
+
+        <div class="auth-footer">
+            Déjà inscrit ? <a href="login.html">Se connecter</a>
+        </div>
+    </div>
+
+    <script>
+        // Afficher les erreurs
+        const urlParams = new URLSearchParams(window.location.search);
+        const error = urlParams.get('error');
+        if (error) {
+            const errorMsg = document.getElementById('error-msg');
+            const errorText = document.getElementById('error-text');
+            errorMsg.style.display = 'block';
+            
+            switch(error) {
+                case 'empty':
+                    errorText.textContent = 'Veuillez remplir tous les champs obligatoires.';
+                    break;
+                case 'password':
+                    errorText.textContent = 'Les mots de passe ne correspondent pas.';
+                    break;
+                case 'exists':
+                    errorText.textContent = 'Ce nom d\'utilisateur ou email existe déjà.';
+                    break;
+                default:
+                    errorText.textContent = 'Une erreur est survenue.';
+            }
+        }
+
+        // Mode sombre
+        const themeBtn = document.getElementById('theme-btn');
+        const html = document.documentElement;
+        
+        if(localStorage.getItem('theme') === 'dark') {
+            html.setAttribute('data-theme', 'dark');
+            themeBtn.innerHTML = '<i class="fas fa-sun"></i> Mode Jour';
+            themeBtn.style.background = '#1967d2';
+            themeBtn.style.color = 'white';
+        }
+
+        themeBtn.addEventListener('click', () => {
+            if (html.getAttribute('data-theme') === 'dark') {
+                html.removeAttribute('data-theme');
+                localStorage.setItem('theme', 'light');
+                themeBtn.innerHTML = '<i class="fas fa-moon"></i> Mode Nuit';
+                themeBtn.style.background = 'white';
+                themeBtn.style.color = 'black';
+            } else {
+                html.setAttribute('data-theme', 'dark');
+                localStorage.setItem('theme', 'dark');
+                themeBtn.innerHTML = '<i class="fas fa-sun"></i> Mode Jour';
+                themeBtn.style.background = '#1967d2';
+                themeBtn.style.color = 'white';
+            }
+        });
+    </script>
 </body>
 </html>
