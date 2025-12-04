@@ -3,10 +3,11 @@ namespace Privee;
 
 class Database {
     public static function getPdo() {
-        $host = 'localhost';
-        $dbname = 'guardia_app';
-        $username = 'root';
-        $password = '';
+        // Configuration pour Docker
+        $host = getenv('DB_HOST') ?: 'db';  // 'db' est le nom du service dans docker-compose
+        $dbname = getenv('DB_NAME') ?: 'guardia_app';
+        $username = getenv('DB_USER') ?: 'appuser';
+        $password = getenv('DB_PASSWORD') ?: 'apppassword';
 
         try {
             $pdo = new \PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $username, $password);

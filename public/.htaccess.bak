@@ -37,5 +37,3 @@ Options -Indexes
         Deny from all
     </FilesMatch>
 </Directory>
-
-# Fichier .htaccess vide

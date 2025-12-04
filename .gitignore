@@ -1,33 +1,4 @@
 sonar-project.properties
-.env
-.env.*
-.env.local
-
-# Fichiers sensibles
-privée/
-sextape_de_ch4tbl4nc/
-database_schema/
-*.sql
-*.db
-*.sqlite
-
-# Fichiers de configuration avec credentials
-config/database.php
-database.php
-
-# Logs et cache
-*.log
-logs/
-cache/
-tmp/
 
 # IDE
 .vscode/settings.json
-.idea/
-
-# OS
-.DS_Store
-Thumbs.db
-
-# Uploads utilisateurs
-public/uploads/

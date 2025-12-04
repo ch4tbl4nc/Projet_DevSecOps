@@ -29,3 +29,14 @@ CREATE TABLE IF NOT EXISTS events (
     image_path VARCHAR(255) NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Création des utilisateurs MySQL
+-- Compte admin (tous droits)
+CREATE USER IF NOT EXISTS 'admin'@'%' IDENTIFIED BY 'adminpassword';
+GRANT ALL PRIVILEGES ON guardia_app.* TO 'admin'@'%';
+
+-- Compte utilisateur limité (SELECT, INSERT, UPDATE, DELETE)
+CREATE USER IF NOT EXISTS 'appuser'@'%' IDENTIFIED BY 'apppassword';
+GRANT SELECT, INSERT, UPDATE, DELETE ON guardia_app.* TO 'appuser'@'%';
+
+FLUSH PRIVILEGES;
