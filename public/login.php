@@ -4,7 +4,7 @@ error_reporting(E_ALL);
 
 session_start();
 
-require_once __DIR__ . '/../privée/database.php';
+require_once '/var/www/private/database.php';
 use Privee\Database;
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {

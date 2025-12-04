@@ -1,4 +1,5 @@
 sonar-project.properties
 
 # IDE
+.vscode
 .vscode/settings.json

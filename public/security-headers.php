@@ -1,5 +1,4 @@
-<?
-php
+<?php
 /**
  * Configuration de sécurité globale
  * À inclure au début de chaque fichier PHP

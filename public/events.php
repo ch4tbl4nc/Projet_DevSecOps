@@ -7,8 +7,8 @@ if (!isset($_SESSION['user_id'])) {
     exit;
 }
 
-require_once __DIR__ . '/../privée/database.php';
-require_once __DIR__ . '/../privée/WeatherService.php';
+require_once '/var/www/private/database.php';
+require_once __DIR__ . '/../private/WeatherService.php';
 use Privee\Database;
 use Privee\WeatherService;
 

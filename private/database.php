@@ -6,8 +6,8 @@ class Database {
         // Configuration pour Docker
         $host = getenv('DB_HOST') ?: 'db';  // 'db' est le nom du service dans docker-compose
         $dbname = getenv('DB_NAME') ?: 'guardia_app';
-        $username = getenv('DB_USER') ?: 'appuser';
-        $password = getenv('DB_PASSWORD') ?: 'apppassword';
+        $username = 'root';
+        $password = getenv('MYSQL_ROOT_PASSWORD') ?: 'rootpassword';
 
         try {
             $pdo = new \PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $username, $password);

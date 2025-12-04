@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once __DIR__ . '/../privée/database.php';
+require_once '/var/www/private/database.php';
 use Privee\Database;
 $pdo = Database::getPdo();
 

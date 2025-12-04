@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  # --- Conteneur 1 : Votre Site Web ---
+  website:
+    build: .
+    container_name: MonAgendaPro_website
+    ports:
+      - "8080:80"
+    volumes:
+      - ./public:/var/www/html
+      - ./private:/var/www/private
+    depends_on:
+      - db
+    restart: unless-stopped
+
+  # --- Conteneur 2 : La Base de Données ---
+  db:
+    image: mysql:8.0
+    container_name: MonAgendaPro_mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      # MYSQL_USER: ${MYSQL_USER}
+      # MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./private/accounts.sql:/docker-entrypoint-initdb.d/init.sql
+    restart: unless-stopped
+
+  # --- Conteneur 3 : PhpMyAdmin ---
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: MonAgendaPro_phpmyadmin
+    restart: always
+    ports:
+      - "8081:80"
+    environment:
+      PMA_HOST: db
+      PMA_USER: root
+      PMA_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    depends_on:
+      - db
+
+volumes:
+  db_data:
