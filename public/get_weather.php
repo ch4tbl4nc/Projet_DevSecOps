@@ -1,12 +1,21 @@
 <?php
 header('Content-Type: application/json');
 
+// Vérifier que l'utilisateur est connecté
+session_start();
+if (!isset($_SESSION['user_id'])) {
+    http_response_code(401);
+    echo json_encode(['error' => 'Non autorisé']);
+    exit;
+}
+
 require_once '/var/www/private/WeatherService.php';
 use Privee\WeatherService;
 
-$city = $_GET['city'] ?? '';
-$date = $_GET['date'] ?? '';
-$country = $_GET['country'] ?? 'FR';   
+// Sanitization des entrées
+$city = preg_replace('/[^a-zA-Z\s\-\'\x{00C0}-\x{017F}]/u', '', trim($_GET['city'] ?? ''));
+$date = preg_replace('/[^0-9\-]/', '', $_GET['date'] ?? '');
+$country = preg_replace('/[^A-Z]/', '', strtoupper(substr(trim($_GET['country'] ?? 'FR'), 0, 2)));
 
 if (empty($city) || empty($date)) {
     echo json_encode(['error' => 'Paramètres manquants (ville ou date)']);

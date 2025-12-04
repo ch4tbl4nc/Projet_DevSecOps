@@ -2,9 +2,16 @@
 namespace Privee;
 
 class Config {
-    // Remplacez par votre clé API OpenWeatherMap
-    // Obtenez-la sur : https://openweathermap.org/api
-    const OPENWEATHER_API_KEY = '8ebf1d303350f50a689ac40973e7c4f1';
+    // Clé API OpenWeatherMap chargée depuis l'environnement
+    // Ne JAMAIS mettre de clé API en dur dans le code
+    
+    public static function getApiKey(): string {
+        $key = getenv('OPENWEATHER_API_KEY');
+        if (empty($key)) {
+            throw new \RuntimeException('OPENWEATHER_API_KEY non définie dans l\'environnement');
+        }
+        return $key;
+    }
     
     // Langue des résultats météo
     const WEATHER_LANG = 'fr';
