@@ -1,15 +1,20 @@
+<?php
+require_once __DIR__ . '/../security-headers.php';
+session_start();
+$csrf_token = generateCsrfToken();
+?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Connexion - MonAgendaPro</title>
+    <title>Inscription - MonAgendaPro</title>
     <link rel="stylesheet" href="../css/events_form.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         .auth-container {
             max-width: 450px;
-            margin: 100px auto;
+            margin: 80px auto;
             padding: 40px;
             background: var(--bg-card);
             border-radius: 16px;
@@ -69,41 +74,79 @@
     <div class="orbit orbit3"><div class="cercle3"></div></div>
 
     <div class="auth-container">
-        <h1><i class="fas fa-lock"></i> Connexion</h1>
-        <p class="auth-subtitle">Accédez à votre espace MonAgendaPro</p>
+        <h1><i class="fas fa-user-plus"></i> Inscription</h1>
+        <p class="auth-subtitle">Créez votre compte MonAgendaPro</p>
 
         <!-- Message d'erreur -->
         <div class="error-message" id="error-msg" style="display: none;">
             <i class="fas fa-exclamation-circle"></i>
-            <span>Identifiant ou mot de passe incorrect</span>
+            <span id="error-text">Une erreur est survenue</span>
         </div>
 
-        <form action="../login.php" method="POST">
+        <form action="../register.php" method="POST">
+            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token) ?>">
+            
             <div class="form-group">
                 <label for="username">Nom d'utilisateur <span class="required">*</span></label>
                 <input type="text" id="username" name="username" required placeholder="Votre pseudo">
             </div>
 
             <div class="form-group">
+                <label for="email">Email <span class="required">*</span></label>
+                <input type="email" id="email" name="email" required placeholder="votre@email.com">
+            </div>
+
+            <div class="form-group">
                 <label for="password">Mot de passe <span class="required">*</span></label>
-                <input type="password" id="password" name="password" required placeholder="Votre mot de passe">
+                <input type="password" id="password" name="password" required placeholder="Votre mot de passe" minlength="6">
+            </div>
+
+            <div class="form-group">
+                <label for="confirm_password">Confirmer le mot de passe <span class="required">*</span></label>
+                <input type="password" id="confirm_password" name="confirm_password" required placeholder="Confirmez le mot de passe">
             </div>
 
             <button type="submit" class="btn-submit">
-                <i class="fas fa-sign-in-alt"></i> Se connecter
+                <i class="fas fa-user-plus"></i> Créer mon compte
             </button>
         </form>
 
         <div class="auth-footer">
-            Pas encore inscrit ? <a href="register.html">Créer un compte</a>
+            Déjà inscrit ? <a href="login.php">Se connecter</a>
         </div>
     </div>
 
     <script>
-        // Afficher l'erreur si présente
+        // Afficher les erreurs
         const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.get('error')) {
-            document.getElementById('error-msg').style.display = 'block';
+        const error = urlParams.get('error');
+        if (error) {
+            const errorMsg = document.getElementById('error-msg');
+            const errorText = document.getElementById('error-text');
+            errorMsg.style.display = 'block';
+            
+            switch(error) {
+                case 'empty':
+                    errorText.textContent = 'Veuillez remplir tous les champs obligatoires.';
+                    break;
+                case 'password':
+                    errorText.textContent = 'Les mots de passe ne correspondent pas.';
+                    break;
+                case 'password_length':
+                    errorText.textContent = 'Le mot de passe doit contenir au moins 6 caractères.';
+                    break;
+                case 'email':
+                    errorText.textContent = 'Adresse email invalide.';
+                    break;
+                case 'exists':
+                    errorText.textContent = 'Ce nom d\'utilisateur ou email existe déjà.';
+                    break;
+                case 'csrf':
+                    errorText.textContent = 'Session expirée. Veuillez réessayer.';
+                    break;
+                default:
+                    errorText.textContent = 'Une erreur est survenue.';
+            }
         }
 
         // Mode sombre

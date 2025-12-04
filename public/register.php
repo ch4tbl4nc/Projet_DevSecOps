@@ -1,37 +1,51 @@
 <?php
-ini_set('display_errors', 1);
-error_reporting(E_ALL);
-
+require_once __DIR__ . '/security-headers.php';
 session_start();
 
 require_once '/var/www/private/database.php';
 use Privee\Database;
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    header('Location: views/register.html');
+    header('Location: views/register.php');
+    exit;
+}
+
+// Vérification CSRF
+$csrf_token = $_POST['csrf_token'] ?? '';
+if (!verifyCsrfToken($csrf_token)) {
+    header('Location: views/register.php?error=csrf');
     exit;
 }
 
 try {
     $pdo = Database::getPdo();
     
-    // Accepter différents noms de champs possibles
-    $username = trim($_POST['username'] ?? $_POST['name'] ?? $_POST['user'] ?? '');
-    $email = trim($_POST['email'] ?? $_POST['mail'] ?? '');
-    $password = $_POST['password'] ?? $_POST['pwd'] ?? $_POST['pass'] ?? '';
-    $confirm_password = $_POST['confirm_password'] ?? $_POST['password_confirm'] ?? $_POST['confirm'] ?? $_POST['password2'] ?? $password;
-    
-    // Debug - décommenter pour voir les données reçues
-    // echo "<pre>Données reçues: "; print_r($_POST); echo "</pre>"; exit;
+    // Sanitization des entrées
+    $username = sanitizeInput($_POST['username'] ?? '');
+    $email = sanitizeInput($_POST['email'] ?? '');
+    $password = $_POST['password'] ?? '';
+    $confirm_password = $_POST['confirm_password'] ?? $password;
     
     // Vérifications
     if (empty($username) || empty($email) || empty($password)) {
-        header('Location: views/register.html?error=empty');
+        header('Location: views/register.php?error=empty');
+        exit;
+    }
+    
+    // Validation email
+    if (!validateEmail($email)) {
+        header('Location: views/register.php?error=email');
+        exit;
+    }
+    
+    // Validation longueur mot de passe
+    if (strlen($password) < 6) {
+        header('Location: views/register.php?error=password_length');
         exit;
     }
     
     if ($password !== $confirm_password) {
-        header('Location: views/register.html?error=password');
+        header('Location: views/register.php?error=password');
         exit;
     }
     
@@ -40,7 +54,7 @@ try {
     $stmt->execute([$username, $email]);
     
     if ($stmt->fetch()) {
-        header('Location: views/register.html?error=exists');
+        header('Location: views/register.php?error=exists');
         exit;
     }
     
@@ -48,6 +62,9 @@ try {
     $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
     $stmt = $pdo->prepare("INSERT INTO users (username, email, password, is_admin) VALUES (?, ?, ?, 0)");
     $stmt->execute([$username, $email, $hashedPassword]);
+    
+    // Régénérer l'ID de session
+    session_regenerate_id(true);
     
     // Connexion automatique
     $_SESSION['user_id'] = $pdo->lastInsertId();
@@ -58,6 +75,7 @@ try {
     exit;
     
 } catch (Exception $e) {
-    echo "Erreur: " . $e->getMessage();
+    error_log('Register error: ' . $e->getMessage());
+    header('Location: views/register.php?error=server');
     exit;
 }

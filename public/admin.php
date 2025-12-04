@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/security-headers.php';
 session_start();
 require_once '/var/www/private/database.php';
 use Privee\Database;
@@ -7,7 +8,7 @@ $pdo = Database::getPdo();
 
 // Vérifier si l'utilisateur est connecté et admin
 if (!isset($_SESSION['user_id'])) {
-    header('Location: views/login.html');
+    header('Location: views/login.php');
     exit;
 }
 
@@ -22,24 +23,31 @@ if (!$currentUser || $currentUser['is_admin'] != 1) {
 
 // Traitement des actions admin
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Vérification CSRF
+    $csrf_token = $_POST['csrf_token'] ?? '';
+    if (!verifyCsrfToken($csrf_token)) {
+        header('Location: admin.php?error=csrf');
+        exit;
+    }
+
     // Changer le statut admin d'un utilisateur
     if (isset($_POST['toggle_admin'])) {
-        $userId = $_POST['user_id'];
-        $newStatus = $_POST['new_status'];
+        $userId = filter_var($_POST['user_id'], FILTER_VALIDATE_INT);
+        $newStatus = filter_var($_POST['new_status'], FILTER_VALIDATE_INT);
         
         // Empêcher de se retirer ses propres droits admin
-        if ($userId != $_SESSION['user_id']) {
+        if ($userId && $userId != $_SESSION['user_id']) {
             $stmt = $pdo->prepare('UPDATE users SET is_admin = ? WHERE id = ?');
-            $stmt->execute([$newStatus, $userId]);
+            $stmt->execute([$newStatus ? 1 : 0, $userId]);
         }
     }
     
     // Supprimer un utilisateur
     if (isset($_POST['delete_user'])) {
-        $userId = $_POST['user_id'];
+        $userId = filter_var($_POST['user_id'], FILTER_VALIDATE_INT);
         
         // Empêcher de se supprimer soi-même
-        if ($userId != $_SESSION['user_id']) {
+        if ($userId && $userId != $_SESSION['user_id']) {
             $stmt = $pdo->prepare('DELETE FROM users WHERE id = ?');
             $stmt->execute([$userId]);
         }
@@ -47,26 +55,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
     // Supprimer un événement
     if (isset($_POST['delete_event'])) {
-        $eventId = $_POST['event_id'];
+        $eventId = filter_var($_POST['event_id'], FILTER_VALIDATE_INT);
         
-        // Récupérer le chemin de l'image avant suppression
-        $stmt = $pdo->prepare('SELECT image_path FROM events WHERE id = ?');
-        $stmt->execute([$eventId]);
-        $event = $stmt->fetch();
-        
-        // Supprimer l'image si elle existe
-        if ($event && $event['image_path'] && file_exists(__DIR__ . '/' . $event['image_path'])) {
-            unlink(__DIR__ . '/' . $event['image_path']);
+        if ($eventId) {
+            // Récupérer le chemin de l'image avant suppression
+            $stmt = $pdo->prepare('SELECT image_path FROM events WHERE id = ?');
+            $stmt->execute([$eventId]);
+            $event = $stmt->fetch();
+            
+            // Supprimer l'image si elle existe
+            if ($event && $event['image_path'] && file_exists(__DIR__ . '/' . $event['image_path'])) {
+                unlink(__DIR__ . '/' . $event['image_path']);
+            }
+            
+            $stmt = $pdo->prepare('DELETE FROM events WHERE id = ?');
+            $stmt->execute([$eventId]);
         }
-        
-        $stmt = $pdo->prepare('DELETE FROM events WHERE id = ?');
-        $stmt->execute([$eventId]);
     }
     
     // Redirection pour éviter la resoumission
     header('Location: admin.php');
     exit;
 }
+
+// Générer le token CSRF
+$csrf_token = generateCsrfToken();
 
 // Récupérer les statistiques
 $totalUsers = $pdo->query('SELECT COUNT(*) FROM users')->fetchColumn();
@@ -95,7 +108,7 @@ $monthlyStats = $pdo->query("
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Administration - GUARDIA</title>
+    <title>Administration - MonAgendaPro</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <link rel="stylesheet" href="css/admin.css">
@@ -122,7 +135,7 @@ $monthlyStats = $pdo->query("
       <!-- Header -->
       <div class="header">
         <h1><i class="fas fa-shield-halved"></i> Dashboard Administration</h1>
-        <p>Gérez les utilisateurs et les événements GUARDIA</p>
+        <p>Gérez les utilisateurs et les événements MonAgendaPro</p>
       </div>
 
       <!-- Navigation -->
@@ -215,6 +228,7 @@ $monthlyStats = $pdo->query("
                     <td class="actions">
                       <?php if($user['id'] != $_SESSION['user_id']): ?>
                         <form method="POST" style="display:inline;">
+                          <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token) ?>">
                           <input type="hidden" name="user_id" value="<?= $user['id'] ?>">
                           <input type="hidden" name="new_status" value="<?= $user['is_admin'] ? 0 : 1 ?>">
                           <button type="submit" name="toggle_admin" class="btn-action <?= $user['is_admin'] ? 'btn-demote' : 'btn-promote' ?>">
@@ -222,6 +236,7 @@ $monthlyStats = $pdo->query("
                           </button>
                         </form>
                         <form method="POST" style="display:inline;" onsubmit="return confirm('Supprimer cet utilisateur ?');">
+                          <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token) ?>">
                           <input type="hidden" name="user_id" value="<?= $user['id'] ?>">
                           <button type="submit" name="delete_user" class="btn-action btn-delete"><i class="fas fa-trash"></i> Supprimer</button>
                         </form>
@@ -280,6 +295,7 @@ $monthlyStats = $pdo->query("
                     </td>
                     <td class="actions">
                       <form method="POST" style="display:inline;" onsubmit="return confirm('Supprimer cet événement ?');">
+                        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token) ?>">
                         <input type="hidden" name="event_id" value="<?= $event['id'] ?>">
                         <button type="submit" name="delete_event" class="btn-action btn-delete"><i class="fas fa-trash"></i> Supprimer</button>
                       </form>

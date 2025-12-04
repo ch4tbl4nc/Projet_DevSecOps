@@ -1,6 +1,6 @@
-CREATE DATABASE IF NOT EXISTS guardia_app CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE DATABASE IF NOT EXISTS monagendapro_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
-USE guardia_app;
+USE monagendapro_db;
 
 -- Table des utilisateurs
 CREATE TABLE IF NOT EXISTS users (
@@ -33,10 +33,10 @@ CREATE TABLE IF NOT EXISTS events (
 -- Création des utilisateurs MySQL
 -- Compte admin (tous droits)
 CREATE USER IF NOT EXISTS 'admin'@'%' IDENTIFIED BY 'adminpassword';
-GRANT ALL PRIVILEGES ON guardia_app.* TO 'admin'@'%';
+GRANT ALL PRIVILEGES ON monagendapro_db.* TO 'admin'@'%';
 
 -- Compte utilisateur limité (SELECT, INSERT, UPDATE, DELETE)
 CREATE USER IF NOT EXISTS 'appuser'@'%' IDENTIFIED BY 'apppassword';
-GRANT SELECT, INSERT, UPDATE, DELETE ON guardia_app.* TO 'appuser'@'%';
+GRANT SELECT, INSERT, UPDATE, DELETE ON monagendapro_db.* TO 'appuser'@'%';
 
 FLUSH PRIVILEGES;

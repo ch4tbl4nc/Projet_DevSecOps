@@ -8,7 +8,7 @@ class WeatherService {
     private static $baseUrl = 'https://api.openweathermap.org/data/2.5/';
     
     public static function init() {
-        self::$apiKey = Config::OPENWEATHER_API_KEY;
+        self::$apiKey = Config::getApiKey();
     }
     
     /**

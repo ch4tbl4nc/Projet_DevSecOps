@@ -1,7 +1,7 @@
 <?php
 header('Content-Type: application/json');
 
-require_once __DIR__ . '/../private/WeatherService.php';
+require_once '/var/www/private/WeatherService.php';
 use Privee\WeatherService;
 
 $city = $_GET['city'] ?? '';

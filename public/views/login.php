@@ -1,3 +1,8 @@
+<?php
+require_once __DIR__ . '/../security-headers.php';
+session_start();
+$csrf_token = generateCsrfToken();
+?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -79,6 +84,8 @@
         </div>
 
         <form action="../login.php" method="POST">
+            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token) ?>">
+            
             <div class="form-group">
                 <label for="username">Nom d'utilisateur <span class="required">*</span></label>
                 <input type="text" id="username" name="username" required placeholder="Votre pseudo">
@@ -95,7 +102,7 @@
         </form>
 
         <div class="auth-footer">
-            Pas encore inscrit ? <a href="register.html">Créer un compte</a>
+            Pas encore inscrit ? <a href="register.php">Créer un compte</a>
         </div>
     </div>
 

@@ -3,12 +3,12 @@ session_start();
 
 // Vérifier si l'utilisateur est connecté
 if (!isset($_SESSION['user_id'])) {
-    header('Location: views/login.html');
+    header('Location: views/login.php');
     exit;
 }
 
 require_once '/var/www/private/database.php';
-require_once __DIR__ . '/../private/WeatherService.php';
+require_once '/var/www/private/WeatherService.php';
 use Privee\Database;
 use Privee\WeatherService;
 
@@ -23,7 +23,7 @@ $isLoggedIn = true; // Forcément connecté si on arrive ici
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Événements GUARDIA</title>
+    <title>Événements MonAgendaPro</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <link rel="stylesheet" href="css/events_form.css">
@@ -47,7 +47,7 @@ $isLoggedIn = true; // Forcément connecté si on arrive ici
     </div>
 
     <div class="header">
-      <h1><i class="fas fa-calendar-check"></i> Événements GUARDIA</h1>
+      <h1><i class="fas fa-calendar-check"></i> Événements MonAgendaPro</h1>
       <p>Découvrez tous nos événements à venir</p>
     </div>
 

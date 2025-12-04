@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/security-headers.php';
 session_start();
 require_once '/var/www/private/database.php';
 use Privee\Database;
@@ -11,39 +12,71 @@ if (!isset($_SESSION['is_admin']) || $_SESSION['is_admin'] != 1) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-  $name = $_POST['name'];
-  $theme = $_POST['theme'];
-  $description = $_POST['description'];
-  $address = $_POST['address'];
-  $city = $_POST['city'];
-  $postal_code = $_POST['postal_code'];
-  $country = $_POST['country'];
-  $duration_type = $_POST['duration_type'];
-
-  if ($duration_type === 'single') {
-    $date = $_POST['date'];
-    $start_time = $_POST['heure_debut'];
-    $end_time = $_POST['heure_fin'];
-    $end_date = null;
-  } else {
-    $date = $_POST['date_debut_multi'];
-    $start_time = $_POST['heure_debut_multi'];
-    $end_time = $_POST['heure_fin_multi'];
-    $end_date = $_POST['date_fin_multi'];
+  // Vérification CSRF
+  $csrf_token = $_POST['csrf_token'] ?? '';
+  if (!verifyCsrfToken($csrf_token)) {
+      header('Location: form.php?error=csrf');
+      exit;
   }
 
-  // Gestion de l'upload d'image
+  // Sanitization des entrées
+  $name = sanitizeInput($_POST['name'] ?? '');
+  $theme = sanitizeInput($_POST['theme'] ?? '');
+  $description = sanitizeInput($_POST['description'] ?? '');
+  $address = sanitizeInput($_POST['address'] ?? '');
+  $city = sanitizeInput($_POST['city'] ?? '');
+  $postal_code = sanitizeInput($_POST['postal_code'] ?? '');
+  $country = sanitizeInput($_POST['country'] ?? 'France');
+  $duration_type = $_POST['duration_type'] ?? 'single';
+
+  if ($duration_type === 'single') {
+    $date = $_POST['date'] ?? '';
+    $start_time = $_POST['heure_debut'] ?? '';
+    $end_time = $_POST['heure_fin'] ?? '';
+    $end_date = null;
+  } else {
+    $date = $_POST['date_debut_multi'] ?? '';
+    $start_time = $_POST['heure_debut_multi'] ?? '';
+    $end_time = $_POST['heure_fin_multi'] ?? '';
+    $end_date = $_POST['date_fin_multi'] ?? '';
+  }
+
+  // Validation des champs requis
+  if (empty($name) || empty($date) || empty($start_time) || empty($end_time) || empty($address) || empty($city)) {
+      header('Location: form.php?error=empty');
+      exit;
+  }
+
+  // Validation date et heure
+  if (!validateDate($date) || !validateTime($start_time) || !validateTime($end_time)) {
+      header('Location: form.php?error=format');
+      exit;
+  }
+
+  // Gestion de l'upload d'image sécurisé
   $image_path = null;
   if (isset($_FILES['event_image']) && $_FILES['event_image']['error'] === UPLOAD_ERR_OK) {
-    $upload_dir = __DIR__ . '/uploads/events/';
-    if (!is_dir($upload_dir)) {
-      mkdir($upload_dir, 0777, true);
+    // Vérifier la taille (max 5MB)
+    if ($_FILES['event_image']['size'] > 5 * 1024 * 1024) {
+        header('Location: form.php?error=filesize');
+        exit;
     }
     
+    $upload_dir = __DIR__ . '/uploads/events/';
+    if (!is_dir($upload_dir)) {
+      mkdir($upload_dir, 0755, true);
+    }
+    
+    // Vérifier le type MIME réel
+    $finfo = finfo_open(FILEINFO_MIME_TYPE);
+    $mime_type = finfo_file($finfo, $_FILES['event_image']['tmp_name']);
+    finfo_close($finfo);
+    
+    $allowed_mimes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
     $file_extension = strtolower(pathinfo($_FILES['event_image']['name'], PATHINFO_EXTENSION));
     $allowed_extensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
     
-    if (in_array($file_extension, $allowed_extensions)) {
+    if (in_array($mime_type, $allowed_mimes) && in_array($file_extension, $allowed_extensions)) {
       $unique_name = uniqid('event_', true) . '.' . $file_extension;
       $destination = $upload_dir . $unique_name;
       
@@ -60,13 +93,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
   exit;
 }
 
+// Générer le token CSRF pour le formulaire
+$csrf_token = generateCsrfToken();
+
 $stmt = $pdo->query("SELECT * FROM events ORDER BY date DESC, start_time DESC");
 $events = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Créer un Événement - GUARDIA</title>
+    <title>Créer un Événement - MonAgendaPro</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <link rel="stylesheet" href="css/events_form.css">
@@ -92,7 +128,7 @@ $events = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <div class="container">
       <div class="header">
         <h1><i class="fas fa-calendar-plus"></i> Créer un Événement</h1>
-        <p>Remplissez le formulaire pour ajouter un nouvel événement GUARDIA</p>
+        <p>Remplissez le formulaire pour ajouter un nouvel événement MonAgendaPro</p>
       </div>
 
       <div class="form-container">
@@ -101,6 +137,9 @@ $events = $stmt->fetchAll(PDO::FETCH_ASSOC);
         </div>
 
         <form id="event-form" method="POST" action="form.php" enctype="multipart/form-data">
+          <!-- Token CSRF -->
+          <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token) ?>">
+          
           <!-- Informations générales -->
           <div class="form-group">
             <label for="name">Nom de l'événement <span class="required">*</span></label>
